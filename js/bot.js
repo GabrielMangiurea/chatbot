@@ -64,7 +64,7 @@
       },
 
       searchGoogle: function (query) {
-        window.open('https://www.google.com/#q=' + encodeURI(query));
+        window.open('https://www.google.com/search?q=' + encodeURI(query));
 
         this.events.emit('message', {
           id: (_mID++),
