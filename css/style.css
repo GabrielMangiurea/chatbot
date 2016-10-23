@@ -1,0 +1,91 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto:300");
+
+*,
+html,
+body {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background-color: #efefef;
+  font: 16px/1.2 'Roboto', sans-serif;
+}
+
+a:link {
+  color: #1E90FF;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #1E90FF;
+  text-decoration: underline;
+}
+
+a:active,
+a:visited {
+  color: #1E90FF;
+  text-decoration: none;
+}
+
+.container {
+  margin-top: 10px;
+}
+
+.bot-container [class^="col-"] {
+  margin: 2px 0;
+  padding: 0 1px;
+}
+
+.view {
+  margin: 10px 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.conversation {
+  border-radius: 10px;
+  padding: 10px;
+  min-width: 25%;
+  max-width: 80%;
+  overflow-wrap: break-word;
+  color: white;
+}
+
+.conversation.bot {
+  background-color: #228b22;
+  float: left;
+  clear: both;
+}
+
+.conversation.user {
+  background-color: #4169e1;
+  float: right;
+  clear: both;
+}
+
+.conversation a {
+  color: yellow;
+}
+
+.name,
+.message,
+.timestamp {
+  display: block;
+  padding: 2.5px;
+}
+
+.name {
+  display: block;
+  font-weight: 600;
+}
+
+.timestamp {
+  font-size: 0.7rem;
+  font-style: italic;
+}
+
+.footer {
+  font-size: 0.75rem;
+  padding: 20px 0;
+}
