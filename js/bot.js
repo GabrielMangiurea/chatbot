@@ -1,8 +1,7 @@
 (function () {
   "use strict";
 
-  var _mID = 0,
-      _firstResponse = false;
+  var _mID = 0;
 
   function Bot (name) {
     var _id,
@@ -17,7 +16,8 @@
     this.delay = 500;
 
     this.executionMessage = false;
-
+    this._firstResponse = false;
+    
     this.actions = {
       changeName: function (newName) {
         var greet = ['It\'s a pleasure', 'My pleasure', 'Nice to meet you'];
@@ -43,7 +43,7 @@
               id: (_mID++),
               isBot: true,
               date: new Date(),
-              message: 'You are around the following coordinates: ' + position.coords.latitude + ', ' + position.coords.longitude + '<br>I opened Google Maps for you in another window.'
+              message: 'You are around the following coordinates: ' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + '<br>I opened Google Maps for you in another window.'
             });
           }, function(error) {
             _this.events.emit('message', {
