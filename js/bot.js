@@ -43,7 +43,7 @@
               id: (_mID++),
               isBot: true,
               date: new Date(),
-              message: 'You are around the following coordinates: ' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + '<br>I opened Google Maps for you in another window.'
+              message: 'You are around the following coordinates: ' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + '.<br>I opened Google Maps for you in another window.'
             });
           }, function(error) {
             _this.events.emit('message', {
