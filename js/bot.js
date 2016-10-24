@@ -82,7 +82,7 @@
             id: (_mID++),
             isBot: true,
             date: new Date(),
-            message: 'I couldn\'t open a new window with the results :(.'
+            message: 'Your browser does not allow me to open a new window with the results.'
           });
         }
       },
@@ -100,7 +100,7 @@
             id: (_mID++),
             isBot: true,
             date: new Date(),
-            message: 'I couldn\'t open a new window with the results :(.'
+            message: 'Your browser does not allow me to open a new window with the results.'
           });
         }
       }
