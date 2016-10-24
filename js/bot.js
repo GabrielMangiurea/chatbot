@@ -17,7 +17,7 @@
 
     this.executionMessage = false;
     this._firstResponse = false;
-    
+
     this.actions = {
       changeName: function (newName) {
         var greet = ['It\'s a pleasure', 'My pleasure', 'Nice to meet you'];
@@ -36,14 +36,20 @@
         var _this = this;
 
         if ("geolocation" in navigator) {
+          var _message = '';
+          
           navigator.geolocation.getCurrentPosition(function(position) {
-            window.open('https://www.google.com/maps/@' + position.coords.latitude + ',' + position.coords.longitude + ',15z');
+            if(window.open('https://www.google.com/maps/@' + position.coords.latitude + ',' + position.coords.longitude + ',17z')) {
+              _message = 'You are around the following coordinates: ' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + '.<br>I opened Google Maps for you in another window.';
+            } else {
+              _message = 'You are around the following coordinates: ' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + '.';
+            }
 
             _this.events.emit('message', {
               id: (_mID++),
               isBot: true,
               date: new Date(),
-              message: 'You are around the following coordinates: ' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + '.<br>I opened Google Maps for you in another window.'
+              message: _message
             });
           }, function(error) {
             _this.events.emit('message', {
@@ -64,25 +70,39 @@
       },
 
       searchGoogle: function (query) {
-        window.open('https://www.google.com/search?q=' + encodeURI(query));
-
-        this.events.emit('message', {
-          id: (_mID++),
-          isBot: true,
-          date: new Date(),
-          message: 'I searched on Google for "' + query + '" and opened a new window with the results.'
-        });
+        if(window.open('https://www.google.com/search?q=' + encodeURI(query))) {
+          this.events.emit('message', {
+            id: (_mID++),
+            isBot: true,
+            date: new Date(),
+            message: 'I searched on Google for "' + query + '" and opened a new window with the results.'
+          });
+        } else {
+          this.events.emit('message', {
+            id: (_mID++),
+            isBot: true,
+            date: new Date(),
+            message: 'I couldn\'t open a new window with the results :(.'
+          });
+        }
       },
-      
-      searchYoutube: function (query) {
-        window.open('https://www.youtube.com/results?search_query=' + encodeURI(query));
 
-        this.events.emit('message', {
-          id: (_mID++),
-          isBot: true,
-          date: new Date(),
-          message: 'I searched on Youtube for "' + query + '" and opened a new window with the results.'
-        });
+      searchYoutube: function (query) {
+        if(window.open('https://www.youtube.com/results?search_query=' + encodeURI(query))) {
+          this.events.emit('message', {
+            id: (_mID++),
+            isBot: true,
+            date: new Date(),
+            message: 'I searched on Youtube for "' + query + '" and opened a new window with the results.'
+          });
+        } else {
+          this.events.emit('message', {
+            id: (_mID++),
+            isBot: true,
+            date: new Date(),
+            message: 'I couldn\'t open a new window with the results :(.'
+          });
+        }
       }
     }
 
