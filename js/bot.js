@@ -40,12 +40,12 @@
               _message = 'You are around the following coordinates: ' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + '.';
             }
 
-            this.sendBotMessage(_message);
+            _this.sendBotMessage(_message);
           }, function(error) {
-            this.sendBotMessage('Sorry, but I couldn\'t determine your location.');
+            _this.sendBotMessage('Sorry, but I couldn\'t determine your location.');
           });
         } else {
-          this.sendBotMessage('Sorry, but your current browser does not support Geolocation.');
+          _this.sendBotMessage('Sorry, but your current browser does not support Geolocation.');
         }
       },
 
