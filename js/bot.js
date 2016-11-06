@@ -308,7 +308,7 @@
         isBot: false,
         date: new Date(),
         message: userMessage
-      });     
+      });
 
       _bot.respond(userMessage);
 
@@ -319,6 +319,15 @@
         submitBtn.disabled = false;
       }, (_delay ? _delay : _bot.delay));
     });
+    
+    if(annyang) {
+      var annyangCommands = {
+        '*command': _bot.respond
+      }
+
+      annyang.addCommands(annyangCommands);
+      annyang.start();
+    }
   });
 
 })();
