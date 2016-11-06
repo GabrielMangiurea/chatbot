@@ -24,12 +24,7 @@
 
         this.userName = newName;
 
-        this.events.emit('message', {
-          id: (_mID++),
-          isBot: true,
-          date: new Date(),
-          message: greet[Math.floor(Math.random() * greet.length)] + ', ' + this.userName + '!'
-        });
+        this.sendBotMessage(greet[Math.floor(Math.random() * greet.length)] + ', ' + this.userName + '!');
       },
 
       getLocation: function () {
@@ -37,7 +32,7 @@
 
         if ("geolocation" in navigator) {
           var _message = '';
-          
+
           navigator.geolocation.getCurrentPosition(function(position) {
             if(window.open('https://www.google.com/maps/@' + position.coords.latitude + ',' + position.coords.longitude + ',17z')) {
               _message = 'You are around the following coordinates: ' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + '.<br>I opened Google Maps for you in another window.';
@@ -45,63 +40,28 @@
               _message = 'You are around the following coordinates: ' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + '.';
             }
 
-            _this.events.emit('message', {
-              id: (_mID++),
-              isBot: true,
-              date: new Date(),
-              message: _message
-            });
+            this.sendBotMessage(_message);
           }, function(error) {
-            _this.events.emit('message', {
-              id: (_mID++),
-              isBot: true,
-              date: new Date(),
-              message: 'Sorry, but I couldn\'t determine your location.'
-            });
+            this.sendBotMessage('Sorry, but I couldn\'t determine your location.');
           });
         } else {
-          _this.events.emit('message', {
-            id: (_mID++),
-            isBot: true,
-            date: new Date(),
-            message: 'Sorry, but your current browser does not support Geolocation.'
-          });
+          this.sendBotMessage('Sorry, but your current browser does not support Geolocation.');
         }
       },
 
       searchGoogle: function (query) {
         if(window.open('https://www.google.com/search?q=' + encodeURI(query))) {
-          this.events.emit('message', {
-            id: (_mID++),
-            isBot: true,
-            date: new Date(),
-            message: 'I searched on Google for "' + query + '" and opened a new window with the results.'
-          });
+          this.sendBotMessage('I searched on Google for "' + query + '" and opened a new window with the results.');
         } else {
-          this.events.emit('message', {
-            id: (_mID++),
-            isBot: true,
-            date: new Date(),
-            message: 'Your browser does not allow me to open a new window with the results.'
-          });
+          this.sendBotMessage('Your browser does not allow me to open a new window with the results. Please check your pop-up blocker.');
         }
       },
 
       searchYoutube: function (query) {
         if(window.open('https://www.youtube.com/results?search_query=' + encodeURI(query))) {
-          this.events.emit('message', {
-            id: (_mID++),
-            isBot: true,
-            date: new Date(),
-            message: 'I searched on Youtube for "' + query + '" and opened a new window with the results.'
-          });
+          this.sendBotMessage('I searched on Youtube for "' + query + '" and opened a new window with the results.');
         } else {
-          this.events.emit('message', {
-            id: (_mID++),
-            isBot: true,
-            date: new Date(),
-            message: 'Your browser does not allow me to open a new window with the results.'
-          });
+          this.sendBotMessage('Your browser does not allow me to open a new window with the results. Please check your pop-up blocker.');
         }
       }
     }
@@ -111,7 +71,7 @@
       {pattern: /(?:who|what) are you\?$/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences.']},
       {pattern: /tell me about yourself/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences.']},
       {pattern: /(?:how are you\??|what are you doing\??|what&#39;s up\?)/i, reaction: ['I\'m fine, thank you!', 'I am doing pretty well.', 'I\'m chatting with you.']},
-      {pattern: /gabriel mangiurea/i, reaction: ['Gabriel Mangiurea is my creator.<br>He is a web developer from Bucharest, Romania.<br>You can visit his website at <a href="https://gabrielmangiurea.github.io">gabrielmangiurea.github.io</a>']},
+      {pattern: /gabriel mangiurea/i, reaction: ['Gabriel Mangiurea is my creator.<br>He is a web developer from Bucharest, Romania.<br>You can visit his website at <a href="https://gabrielmangiurea.github.io">gabrielmangiurea.github.io</a>.']},
       {pattern: /my name is ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
       {pattern: /i am ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
       {pattern: /(?:you can )?call me ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
@@ -166,15 +126,20 @@
       }
     };
   }
-
+  
+  Bot.prototype.sendBotMessage = function (message) {
+    this.events.emit('message', {
+      id: (_mID++),
+      isBot: true,
+      date: new Date(),
+      message: message
+    });
+  }
+  
   Bot.prototype.respond = function (question) {
     if (!question && !this._firstResponse) {
-      this.events.emit('message', {
-        id: (_mID++),
-        isBot: true,
-        date: new Date(),
-        message: 'Hello! I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences.'
-      });
+      this.sendBotMessage('Hello! I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences.');
+      
       this._firstResponse = true;
 
     } else if (question && this._firstResponse) {
@@ -202,12 +167,7 @@
               console.error((this.prefix ? this.prefix : '[BOT]') + ' Error: supply a response for ' + _r.pattern + '!');
               return;
             } else {
-              this.events.emit('message', {
-                id: (_mID++),
-                isBot: true,
-                date: new Date(),
-                message: _r.reaction[Math.floor(Math.random() * _r.reaction.length)]
-              });
+              this.sendBotMessage(_r.reaction[Math.floor(Math.random() * _r.reaction.length)]);
             }
           } else {
             return;
@@ -218,14 +178,9 @@
       if (this.reactsTo.filter(function (el) {
         return el.pattern.test(question);
       }) == false) {
-        var sentences = ['I am currently limited in what I can say.<br>I think I\'ll need an upgrade in the near future.'];
+        var sentences = ['I am currently limited in what I can say.<br>I think I\'ll need an upgrade in the near future.', 'Sorry, but I couldn\'t understand. Can you repeat, please?'];
 
-        this.events.emit('message', {
-          id: (_mID++),
-          isBot: true,
-          date: new Date(),
-          message: sentences[Math.floor(Math.random() * sentences.length)]
-        });
+        this.sendBotMessage(sentences[Math.floor(Math.random() * sentences.length)])
       }
     }
   };
@@ -243,12 +198,7 @@
       }, _bot.delay);
 
       if (_bot.executionMessage) {
-        _bot.events.emit('message', {
-          id: (_mID++),
-          isBot: true,
-          date: new Date(),
-          message: 'I just called ' + action.name + '() function with the following parameters: ' + params.join(', ')
-        });
+        _bot.sendBotMessage('I just called ' + action.name + '() function with the following parameters: ' + params.join(', '));
       }
     });
 
@@ -319,14 +269,25 @@
         submitBtn.disabled = false;
       }, (_delay ? _delay : _bot.delay));
     });
-    
+
     if(annyang) {
       var annyangCommands = {
-        '*command': _bot.respond
+        '*voiceCommand': sendToBot
       }
 
       annyang.addCommands(annyangCommands);
       annyang.start();
+    }
+
+    function sendToBot(voiceCommand) {
+      _bot.events.emit('message', {
+        id: (_mID++),
+        isBot: false,
+        date: new Date(),
+        message: voiceCommand
+      });
+      
+      _bot.respond(voiceCommand);
     }
   });
 
