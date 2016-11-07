@@ -154,7 +154,7 @@
 
           if (isObject && !isArray) { 
             if (!_r.reaction.action) {
-              console.error((this.prefix ? this.prefix : '[BOT]') + ' Error: supply a function for ' + _r.pattern + '!');
+              console.error((this.prefix ? this.prefix : '[BOT] ') + 'Error: supply a function for ' + _r.pattern + '!');
               return;
             } else {
               this.events.emit('action', {
@@ -164,7 +164,7 @@
             }
           } else if (isObject && isArray) {
             if (!_r.reaction.length) {
-              console.error((this.prefix ? this.prefix : '[BOT]') + ' Error: supply a response for ' + _r.pattern + '!');
+              console.error((this.prefix ? this.prefix : '[BOT] ') + 'Error: supply a response for ' + _r.pattern + '!');
               return;
             } else {
               this.sendBotMessage(_r.reaction[Math.floor(Math.random() * _r.reaction.length)]);
@@ -187,7 +187,7 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     var _delay;
-    var _bot = new Bot('Chatbot');
+    var _bot = new Bot('Aida');
 
     _bot.events.register('action', function (ev, data) {
       var action = data.action,
@@ -230,8 +230,14 @@
 
         _view.appendChild(element);
         _view.scrollTop = _view.scrollHeight - _view.clientHeight;
-
-      }, (!_bot._firstResponse ? 100 : (data.isBot ? (_delay = (Math.floor(Math.random() * (data.message.length * 45) +  _bot.delay/2))) : 1)));
+        
+        if (responsiveVoice.voiceSupport()) {
+          if (data.isBot === true) {
+            responsiveVoice.speak(data.message.replace(/<(.|\n)*?>/g, ' '), 'UK English Female');
+          }
+        }
+        
+      }, (!_bot._firstResponse ? 250 : (data.isBot ? (_delay = (Math.floor(Math.random() * (data.message.length * 45) +  _bot.delay/2))) : 1)));
     });
 
     _bot.respond();
