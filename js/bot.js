@@ -69,27 +69,43 @@
       },
       
       startListening: function () {
-        this.listening = true;
-        
-        this.sendBotMessage('I listen you!');
+        if (this.listening === true) {
+          this.sendBotMessage('I already listen...');
+        } else {
+          this.listening = true;
+          this.sendBotMessage('I\'m listening...');
+        }
       },
       
       stopListening: function () {
-        this.listening = false;
-        
-        this.sendBotMessage('I won\'t listen you!');
+        if (this.listening === false) {
+          this.sendBotMessage('I stoppped listening some time ago...');
+        } else {
+          this.listening = false;
+          this.sendBotMessage('I will stop listening...');
+        }
       },
       
       startTalking: function () {
-        this.talking = true;
-        
-        this.sendBotMessage('I will talk!');
+        if (this.talking === true) {
+          this.sendBotMessage('I am talking...')
+        } else {
+          this.talking = true;
+          this.sendBotMessage('I will talk from now on.');
+        }
       },
       
       stopTalking: function () {
-        this.talking = false;
-        
-        this.sendBotMessage('I will stop talking!');
+        if (this.talking === false) {
+          this.sendBotMessage('I stopped talking some time ago...');
+        } else {
+          if(responsiveVoice.isPlaying()) {
+            responsiveVoice.cancel();
+          }
+          
+          this.talking = false;
+          this.sendBotMessage('I will stop talking...');
+        }
       }
     }
 
