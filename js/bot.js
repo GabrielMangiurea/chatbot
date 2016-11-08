@@ -277,6 +277,7 @@
 
         _view.appendChild(element);
         _view.scrollTop = _view.scrollHeight - _view.clientHeight;
+        window.scrollTop = window.scrollHeight - window.clientHeight;
         
         if (responsiveVoice.voiceSupport()) {
           if (_bot.talking && (data.isBot === true)) {
