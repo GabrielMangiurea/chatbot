@@ -2,7 +2,7 @@
 This is a conversational bot written in JavaScript programming language.
 The application does not require any kind of server as it is working on the client side (front-end).
 
-She currently responds to the following expressions (both written and spokennew):
+She currently responds to the following expressions (both written and spoken):
 
 - ``Hello / Hi``
 - ``Who/What are you? / Tell me about yourself``
