@@ -1,7 +1,8 @@
-# Chatbot
-Conversational bot written in JavaScript programming language.
+# Aida - Chatbot
+This is a conversational bot written in JavaScript programming language.
+The application does not require any kind of server as it is working on the client side (front-end).
 
-It currently responds to the following expressions:
+She currently responds to the following expressions (both written and spokennew):
 
 - ``Hello / Hi``
 - ``Who/What are you? / Tell me about yourself``
@@ -12,3 +13,4 @@ It currently responds to the following expressions:
 - ``Where am I?``
 - ``Search (on Google) for [search term(s) here]``
 - ``I want to (listen to/watch) [search term(s) here]``
+- ``Start/stop listening/talking``
