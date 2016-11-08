@@ -111,8 +111,8 @@
 
     this.reactsTo = [
       {pattern: /(?:\b)(?:hello|hi)(?:\b)/i, reaction: ['Hello there!', 'Hi!', 'Greetings!']},
-      {pattern: /(?:who|what) are you\?$/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences.']},
-      {pattern: /tell me about yourself/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences.']},
+      {pattern: /(?:who|what) are you\?$/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.']},
+      {pattern: /tell me about yourself/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.']},
       {pattern: /(?:how are you\??|what are you doing\??|what&#39;s up\?)/i, reaction: ['I\'m fine, thank you!', 'I am doing pretty well.', 'I\'m chatting with you.']},
       {pattern: /gabriel mangiurea/i, reaction: ['Gabriel Mangiurea is my creator.<br>He is a web developer from Bucharest, Romania.<br>You can visit his website at <a href="https://gabrielmangiurea.github.io">gabrielmangiurea.github.io</a>.']},
       {pattern: /my name is ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
@@ -185,7 +185,7 @@
   
   Bot.prototype.respond = function (question) {
     if (!question && !this._firstResponse) {
-      this.sendBotMessage('Hello! I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences.');
+      this.sendBotMessage('Hello! I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.<br>Let\'s talk!');
       
       this._firstResponse = true;
 
