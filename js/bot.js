@@ -11,6 +11,9 @@
     this.name = this.prefix ? (this.prefix + " " + name) : name;
     this.userName = 'User';
 
+    this.listening = true;
+    this.talking = true;
+    
     this.container = document.querySelector('.bot-container');
 
     this.delay = 500;
@@ -63,6 +66,30 @@
         } else {
           this.sendBotMessage('Your browser does not allow me to open a new window with the results. Please check your pop-up blocker.');
         }
+      },
+      
+      startListening: function () {
+        this.listening = true;
+        
+        this.sendBotMessage('I listen you!');
+      },
+      
+      stopListening: function () {
+        this.listening = false;
+        
+        this.sendBotMessage('I won\'t listen you!');
+      },
+      
+      startTalking: function () {
+        this.talking = true;
+        
+        this.sendBotMessage('I will talk!');
+      },
+      
+      stopTalking: function () {
+        this.talking = false;
+        
+        this.sendBotMessage('I will stop talking!');
       }
     }
 
@@ -77,7 +104,11 @@
       {pattern: /(?:you can )?call me ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
       {pattern: /where am i\??/i, reaction: {action: this.actions.getLocation}},
       {pattern: /search (?:(?:on )?(?:Google ))?for (.+)/i, reaction: {action: this.actions.searchGoogle}},
-      {pattern: /i want to (?:listen (?:to )?|watch )(.+)/i, reaction: {action: this.actions.searchYoutube}}
+      {pattern: /i want to (?:listen (?:to )?|watch )(.+)/i, reaction: {action: this.actions.searchYoutube}},
+      {pattern: /start listening/i, reaction: {action: this.actions.startListening}},
+      {pattern: /stop listening/i, reaction: {action: this.actions.stopListening}},
+      {pattern: /start talking/i, reaction: {action: this.actions.startTalking}},
+      {pattern: /stop talking/i, reaction: {action: this.actions.stopTalking}}
     ];
 
     this.events = {
@@ -232,7 +263,7 @@
         _view.scrollTop = _view.scrollHeight - _view.clientHeight;
         
         if (responsiveVoice.voiceSupport()) {
-          if (data.isBot === true) {
+          if (_bot.talking && (data.isBot === true)) {
             responsiveVoice.speak(data.message.replace(/<(.|\n)*?>/g, ' '), 'UK English Female');
           }
         }
@@ -276,7 +307,7 @@
       }, (_delay ? _delay : _bot.delay));
     });
 
-    if(annyang) {
+    if(annyang && _bot.listening) {
       var annyangCommands = {
         '*voiceCommand': sendToBot
       }
