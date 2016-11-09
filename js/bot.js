@@ -40,7 +40,7 @@
             if(window.open('https://www.google.com/maps/@' + position.coords.latitude + ',' + position.coords.longitude + ',17z')) {
               _message = 'You are around the following coordinates: ' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + '.<br>I opened Google Maps for you in another window.';
             } else {
-              _message = 'You are around the following coordinates: ' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + '.';
+              _message = 'You are around the following coordinates: ' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + '.<br>Your browser prevented me to open Google Maps. Please check the pop-up blocker.';
             }
 
             _this.sendBotMessage(_message);
@@ -56,7 +56,7 @@
         if(window.open('https://www.google.com/search?q=' + encodeURI(query))) {
           this.sendBotMessage('I searched on Google for "' + query + '" and opened a new window with the results.');
         } else {
-          this.sendBotMessage('Your browser does not allow me to open a new window with the results. Please check your pop-up blocker.');
+          this.sendBotMessage('Your browser prevented me to open a new window with the results. Please check the pop-up blocker.');
         }
       },
 
@@ -64,7 +64,7 @@
         if(window.open('https://www.youtube.com/results?search_query=' + encodeURI(query))) {
           this.sendBotMessage('I searched on Youtube for "' + query + '" and opened a new window with the results.');
         } else {
-          this.sendBotMessage('Your browser does not allow me to open a new window with the results. Please check your pop-up blocker.');
+          this.sendBotMessage('Your browser prevented me to open a new window with the results. Please check the pop-up blocker.');
         }
       },
       
