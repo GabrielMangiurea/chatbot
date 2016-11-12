@@ -111,7 +111,9 @@
             this.sendBotMessage('I\'m listening...');
           }
           
-          annyang.start();
+          window.setTimeout(function () {
+            annyang.start();
+          }, 1000);
         },
 
         stop: function () {
