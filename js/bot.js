@@ -363,7 +363,7 @@
               );
             }
           } else {
-            if (_bot.listening) {
+            if (_bot.listening && !_bot._firstResponse) {
               annyang.start();
             }  
           }
