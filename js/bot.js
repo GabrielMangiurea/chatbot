@@ -405,9 +405,9 @@
 
       annyang.addCommands(annyangCommands);
       
-      window.setTimeout(function () {
+      if (responsiveVoice.isPlaying == false) {
         annyang.start();
-      }, minDelay);
+      }
     }
 
     function sendToBot(voiceCommand) {
