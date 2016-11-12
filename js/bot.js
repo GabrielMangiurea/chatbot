@@ -180,8 +180,9 @@
       id: (_mID++),
       isBot: true,
       date: new Date(),
-      message: (captured == null) ? message : message.replace(/##(\d)+/, function (match) {
-        return captured[match.replace('##', '') - 1];
+      message: (captured == null) ? message : message.replace(/##(\d)+/g, function (match) {
+        console.log(match);
+        return captured[match.replace('##', '') - 1].replace('&lt;', '<').replace('&gt;', '>').replace('&amp;', '&').replace('&quot;', '"').replace('&#39;', '\'');
       })
     });
   }
