@@ -107,6 +107,7 @@
             this.sendBotMessage('I am already listening...');
           } else {
             this.listening = true;
+            annyang.resume();
             this.sendBotMessage('I\'m listening...');
           }
         },
@@ -116,6 +117,7 @@
             this.sendBotMessage('I stoppped listening some time ago...');
           } else {
             this.listening = false;
+            annyang.pause();
             this.sendBotMessage('I will stop listening...');
           }
         }
@@ -338,7 +340,13 @@
 
         if (responsiveVoice.voiceSupport()) {
           if (_bot.talking && (data.isBot === true)) {
-            responsiveVoice.speak(data.message.replace(/<(.|\n)*?>/g, ' '), 'UK English Female');
+            responsiveVoice.speak(data.message.replace(/<(.|\n)*?>/g, ' '), 'UK English Female', 
+                                  {onstart: function () {
+                                    annyang.pause();
+                                  }, onend: function () {
+                                    annyang.resume();
+                                  }}
+                                 );
           }
         }
         
@@ -384,8 +392,8 @@
         submitBtn.disabled = false;
       });
     });
-
-    if(annyang && _bot.listening) {
+    
+    if(annyang && _bot.listening == true) {
       var annyangCommands = {
         '*voiceCommand': sendToBot
       };
