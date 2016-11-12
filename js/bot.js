@@ -7,7 +7,8 @@
 
   function Bot (name) {
     var _id,
-        _events = {};
+        _events = {},
+        _this = this;
 
     this.prefix = null;
     this.name = this.prefix ? (this.prefix + " " + name) : name;
@@ -33,8 +34,6 @@
       },
 
       getLocation: function () {
-        var _this = this;
-
         if ("geolocation" in navigator) {
           var _message = '';
 
@@ -120,8 +119,8 @@
           if (this.listening === false) {
             this.sendBotMessage('I stoppped listening some time ago...');
           } else {
-            this.listening = false;
             this.sendBotMessage('I will stop listening...');
+            this.listening = false;
           }
 
           annyang.abort();
@@ -142,12 +141,15 @@
           if (this.talking === false) {
             this.sendBotMessage('I stopped talking some time ago...');
           } else {
-            this.talking = false;
-            this.sendBotMessage('I will stop talking...');
-
-            if(responsiveVoice.isPlaying()) {
+            if(responsiveVoice.isPlaying) {
               responsiveVoice.cancel();
             }
+            
+            this.sendBotMessage('I will stop talking...');
+            
+            window.setTimeout(function () {
+              _this.talking = false;
+            }, 1000);
           }
         }
       }
@@ -229,7 +231,6 @@
       isBot: true,
       date: new Date(),
       message: (captured === null) ? message : message.replace(/##(\d)+/g, function (match) {
-        console.log(match);
         return captured[match.replace('##', '') - 1].replace('&lt;', '<').replace('&gt;', '>').replace('&amp;', '&').replace('&quot;', '"').replace('&#39;', '\'');
       })
     });
