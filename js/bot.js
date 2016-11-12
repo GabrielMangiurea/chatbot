@@ -121,9 +121,9 @@
           } else {
             this.sendBotMessage('I will stop listening...');
             this.listening = false;
+            
+            annyang.abort();
           }
-
-          annyang.abort();
         }
       },
 
