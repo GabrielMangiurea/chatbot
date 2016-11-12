@@ -71,7 +71,7 @@
           }
         }
       },
-      
+
       memory: {
         set: function (message) {        
           if (storage) {
@@ -110,7 +110,7 @@
             this.listening = true;
             this.sendBotMessage('I\'m listening...');
           }
-          
+
           window.setTimeout(function () {
             annyang.start();
           }, 1000);
@@ -123,11 +123,11 @@
             this.listening = false;
             this.sendBotMessage('I will stop listening...');
           }
-          
+
           annyang.abort();
         }
       },
-      
+
       talking: {
         start: function () {
           if (this.talking === true) {
@@ -144,10 +144,10 @@
           } else {
             this.talking = false;
             this.sendBotMessage('I will stop talking...');
-          }
-          
-          if(responsiveVoice.isPlaying()) {
+
+            if(responsiveVoice.isPlaying()) {
               responsiveVoice.cancel();
+            }
           }
         }
       }
@@ -295,6 +295,9 @@
   document.addEventListener('DOMContentLoaded', function () {
     var _delay;
     var _bot = new Bot('Aida');
+    var _form = _bot.container.querySelector('form'),
+        userInput = _form.querySelector('input[type="text"]'),
+        submitBtn = _form.querySelector('input[type="submit"]');
 
     _bot.events.register('action', function (ev, data) {
       var action = data.action,
@@ -321,7 +324,7 @@
         name: data.isBot ? _bot.name : _bot.userName,
         message: data.message
       });
-      
+
       annyang.abort();
     });
 
@@ -356,24 +359,33 @@
                                  );
           }
         }
-        
+
         if (data.isBot) {
           _bot.events.emit('unlockUI');
         }
-        
+
       }, (!_bot._firstResponse ? minDelay : (data.isBot ? (_delay = (Math.floor(Math.random() * (data.message.length * 45) +  _bot.delay/2))) : 1)));
+    });
+
+    _bot.events.register('lockUI', function () {
+      userInput.disabled = true;
+      userInput.value = 'Waiting for ' + _bot.name + ' to respond...';
+      submitBtn.disabled = true;
+    });
+
+    _bot.events.register('unlockUI', function () {
+      userInput.disabled = false;
+      userInput.value = '';
+      userInput.focus();
+      submitBtn.disabled = false;
     });
 
     _bot.respond();
 
-    var _form = _bot.container.querySelector('form');
-
     _form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      var userInput    = _form.querySelector('input[type="text"]'),
-          userMessage  = userInput.value.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;').replace(/\"/g, '&quot;').replace(/\'/g, '&#39;'),
-          submitBtn    = _form.querySelector('input[type="submit"]');
+      var userMessage  = userInput.value.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;').replace(/\"/g, '&quot;').replace(/\'/g, '&#39;');
 
       if (userMessage === '') {
         return;
@@ -387,30 +399,17 @@
       });
 
       _bot.events.emit('lockUI');
-      
-      _bot.respond(userMessage);
 
-      _bot.events.register('lockUI', function () {
-        userInput.disabled = true;
-        userInput.value = 'Waiting for ' + _bot.name + ' to respond...';
-        submitBtn.disabled = true;
-      });
-      
-      _bot.events.register('unlockUI', function () {
-        userInput.disabled = false;
-        userInput.value = '';
-        userInput.focus();
-        submitBtn.disabled = false;
-      });
+      _bot.respond(userMessage);
     });
-    
+
     if(annyang && _bot.listening == true) {
       var annyangCommands = {
         '*voiceCommand': sendToBot
       };
 
       annyang.addCommands(annyangCommands);
-      
+
       if (responsiveVoice.isPlaying == false) {
         annyang.start();
       }
@@ -423,9 +422,9 @@
         date: new Date(),
         message: voiceCommand
       });
-      
-      _bot.emit.events('lockUI');
-      
+
+      _bot.events.emit('lockUI');
+
       _bot.respond(voiceCommand);
     }
   });
