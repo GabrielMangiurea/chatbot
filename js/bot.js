@@ -350,14 +350,21 @@
         window.scrollTop = window.scrollHeight - window.clientHeight;
 
         if (responsiveVoice.voiceSupport()) {
-          if (_bot.talking && (data.isBot === true)) {
-            responsiveVoice.speak(data.message.replace(/<(.|\n)*?>/g, ' '), 'UK English Female');
+          if (_bot.talking) {
+            if (data.isBot === true) {
+              responsiveVoice.speak(data.message.replace(/<(.|\n)*?>/g, ' '), 'UK English Female', {onend: function () {
+                                                                                                      annyang.start();
+                                                                                                    }
+                                                                                                   }
+              );
+            }
+          } else {
+            annyang.start();
           }
         }
 
         if (data.isBot) {
           _bot.events.emit('unlockUI');
-          annyang.start();
         }
 
       }, (!_bot._firstResponse ? minDelay : (data.isBot ? (_delay = (Math.floor(Math.random() * (data.message.length * 45) +  _bot.delay/2))) : 1)));
