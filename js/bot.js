@@ -107,7 +107,7 @@
             this.sendBotMessage('I am already listening...');
           } else {
             this.listening = true;
-            annyang.resume();
+            annyang.start();
             this.sendBotMessage('I\'m listening...');
           }
         },
@@ -117,7 +117,7 @@
             this.sendBotMessage('I stoppped listening some time ago...');
           } else {
             this.listening = false;
-            annyang.pause();
+            annyang.abort();
             this.sendBotMessage('I will stop listening...');
           }
         }
@@ -316,6 +316,8 @@
         name: data.isBot ? _bot.name : _bot.userName,
         message: data.message
       });
+      
+      annyang.abort();
     });
 
     _bot.events.register('updateUI', function (ev, data) {
@@ -340,11 +342,9 @@
 
         if (responsiveVoice.voiceSupport()) {
           if (_bot.talking && (data.isBot === true)) {
-            responsiveVoice.speak(data.message.replace(/<(.|\n)*?>/g, ' '), 'UK English Female', 
-                                  {onstart: function () {
-                                    annyang.pause();
-                                  }, onend: function () {
-                                    annyang.resume();
+            responsiveVoice.speak(data.message.replace(/<(.|\n)*?>/g, ' '), 'UK English Female',
+                                  {onend: function () {
+                                    annyang.start();
                                   }}
                                  );
           }
