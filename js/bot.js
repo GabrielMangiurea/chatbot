@@ -1,7 +1,8 @@
 (function () {
   "use strict";
 
-  var _mID = 0;
+  var _mID = 0,
+      storage = window.localStorage;
 
   function Bot (name) {
     var _id,
@@ -67,10 +68,38 @@
           this.sendBotMessage('Your browser prevented me to open a new window with the results. Please check the pop-up blocker.');
         }
       },
+      
+      setRemember: function (message) {        
+        if (storage) {
+          if (storage.getItem('aida-remembers')) {
+            this.sendBotMessage('There is something in my mind already...');
+          } else {
+            storage.setItem('aida-remembers', message);
+            this.sendBotMessage('I will remember that from now on.');
+          }
+        }
+      },
+      
+      getRemember: function () {
+        if (storage) {
+          if (storage.getItem('aida-remembers')) {
+            this.sendBotMessage('I remember you saying: ' + storage.getItem('aida-remembers'));
+          } else {
+            this.sendBotMessage('I don\'t remember anything.');
+          }
+        }
+      },
+      
+      eraseRemember: function () {
+        if (storage) {
+          storage.removeItem('aida-remembers');
+          this.sendBotMessage('My mind is clear now...');
+        }
+      },
 
       startListening: function () {
         if (this.listening === true) {
-          this.sendBotMessage('I already listen...');
+          this.sendBotMessage('I am already listening...');
         } else {
           this.listening = true;
           this.sendBotMessage('I\'m listening...');
@@ -88,7 +117,7 @@
 
       startTalking: function () {
         if (this.talking === true) {
-          this.sendBotMessage('I am talking...')
+          this.sendBotMessage('I am talking...');
         } else {
           this.talking = true;
           this.sendBotMessage('I will talk from now on.');
@@ -107,14 +136,14 @@
           this.sendBotMessage('I will stop talking...');
         }
       }
-    }
+    };
 
     this.reactsTo = [
       {pattern: /(?:\b)(?:hello|hi)(?:\b)/i, reaction: ['Hello there!', 'Hi!', 'Greetings!']},
       {pattern: /(?:who|what) are you\?$/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.']},
       {pattern: /tell me about yourself/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.']},
       {pattern: /(?:how are you\??|what are you doing\??|what&#39;s up\?)/i, reaction: ['I\'m fine, thank you!', 'I am doing pretty well.', 'I\'m chatting with you.']},
-      {pattern: /you(?:\&#39;re| are)(?:\s[a-z]+)?\s(nice|sweet|beautiful|awesome|great|super|epic)/i, reaction: ['Thank you!', 'That\'s very nice of you to say that!', 'No, you are ##1.']},
+      {pattern: /you(?:\&#39;re| are)(?:\s[a-z]+)?\s(nice|sweet|beautiful|awesome|great|super|epic)/i, reaction: ['Thank you!', 'That\'s very nice of you to say that!', 'No, you are ##1!']},
       {pattern: /gabriel mangiurea/i, reaction: ['Gabriel Mangiurea is my creator.<br>He is a web developer from Bucharest, Romania.<br>You can visit his website at <a href="https://gabrielmangiurea.github.io">gabrielmangiurea.github.io</a>.']},
       {pattern: /my name is ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
       {pattern: /i am ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
@@ -122,6 +151,9 @@
       {pattern: /where am i\??/i, reaction: {action: this.actions.getLocation}},
       {pattern: /search (?:(?:on )?(?:Google ))?for (.+)/i, reaction: {action: this.actions.searchGoogle}},
       {pattern: /i want to (?:listen (?:to )?|watch )(.+)/i, reaction: {action: this.actions.searchYoutube}},
+      {pattern: /remember this: (.+)/i, reaction: {action: this.actions.setRemember}},
+      {pattern: /forgot/i, reaction: {action: this.actions.getRemember}},
+      {pattern: /i want you to forget everything/i, reaction: {action: this.actions.eraseRemember}},
       {pattern: /start listening/i, reaction: {action: this.actions.startListening}},
       {pattern: /stop listening/i, reaction: {action: this.actions.stopListening}},
       {pattern: /start talking/i, reaction: {action: this.actions.startTalking}},
@@ -175,17 +207,17 @@
     };
   }
 
-  Bot.prototype.sendBotMessage = function (message, captured = null) {
+  Bot.prototype.sendBotMessage = function (message, captured) {
     this.events.emit('message', {
       id: (_mID++),
       isBot: true,
       date: new Date(),
-      message: (captured == null) ? message : message.replace(/##(\d)+/g, function (match) {
+      message: (captured === null) ? message : message.replace(/##(\d)+/g, function (match) {
         console.log(match);
         return captured[match.replace('##', '') - 1].replace('&lt;', '<').replace('&gt;', '>').replace('&amp;', '&').replace('&quot;', '"').replace('&#39;', '\'');
       })
     });
-  }
+  };
 
   Bot.prototype.respond = function (question) {
     if (!question && !this._firstResponse) {
@@ -236,10 +268,10 @@
 
       if (this.reactsTo.filter(function (el) {
         return el.pattern.test(question);
-      }) == false) {
+      }) === false) {
         var sentences = ['I am currently limited in what I can say.<br>I think I\'ll need an upgrade in the near future.', 'Sorry, but I couldn\'t understand. Can you repeat, please?'];
 
-        this.sendBotMessage(sentences[Math.floor(Math.random() * sentences.length)])
+        this.sendBotMessage(sentences[Math.floor(Math.random() * sentences.length)]);
       }
     }
   };
@@ -347,7 +379,7 @@
     if(annyang && _bot.listening) {
       var annyangCommands = {
         '*voiceCommand': sendToBot
-      }
+      };
 
       annyang.addCommands(annyangCommands);
       annyang.start();
