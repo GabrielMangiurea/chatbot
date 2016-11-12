@@ -53,87 +53,95 @@
         }
       },
 
-      searchGoogle: function (query) {
-        if(window.open('https://www.google.com/search?q=' + encodeURI(query))) {
-          this.sendBotMessage('I searched on Google for "' + query + '" and opened a new window with the results.');
-        } else {
-          this.sendBotMessage('Your browser prevented me to open a new window with the results. Please check the pop-up blocker.');
-        }
-      },
-
-      searchYoutube: function (query) {
-        if(window.open('https://www.youtube.com/results?search_query=' + encodeURI(query))) {
-          this.sendBotMessage('I searched on Youtube for "' + query + '" and opened a new window with the results.');
-        } else {
-          this.sendBotMessage('Your browser prevented me to open a new window with the results. Please check the pop-up blocker.');
-        }
-      },
-      
-      setRemember: function (message) {        
-        if (storage) {
-          if (storage.getItem('aida-remembers')) {
-            this.sendBotMessage('There is something in my mind already...');
+      search: {
+        google: function (query) {
+          if(window.open('https://www.google.com/search?q=' + encodeURI(query))) {
+            this.sendBotMessage('I searched on Google for "' + query + '" and opened a new window with the results.');
           } else {
-            storage.setItem('aida-remembers', message);
-            this.sendBotMessage('I will remember that from now on.');
+            this.sendBotMessage('Your browser prevented me to open a new window with the results. Please check the pop-up blocker.');
           }
-        }
-      },
-      
-      getRemember: function () {
-        if (storage) {
-          if (storage.getItem('aida-remembers')) {
-            this.sendBotMessage('I remember you saying: ' + storage.getItem('aida-remembers'));
+        },
+
+        youtube: function (query) {
+          if(window.open('https://www.youtube.com/results?search_query=' + encodeURI(query))) {
+            this.sendBotMessage('I searched on Youtube for "' + query + '" and opened a new window with the results.');
           } else {
-            this.sendBotMessage('I don\'t remember anything.');
+            this.sendBotMessage('Your browser prevented me to open a new window with the results. Please check the pop-up blocker.');
           }
         }
       },
       
-      eraseRemember: function () {
-        if (storage) {
-          storage.removeItem('aida-remembers');
-          this.sendBotMessage('My mind is clear now...');
-        }
-      },
-
-      startListening: function () {
-        if (this.listening === true) {
-          this.sendBotMessage('I am already listening...');
-        } else {
-          this.listening = true;
-          this.sendBotMessage('I\'m listening...');
-        }
-      },
-
-      stopListening: function () {
-        if (this.listening === false) {
-          this.sendBotMessage('I stoppped listening some time ago...');
-        } else {
-          this.listening = false;
-          this.sendBotMessage('I will stop listening...');
-        }
-      },
-
-      startTalking: function () {
-        if (this.talking === true) {
-          this.sendBotMessage('I am talking...');
-        } else {
-          this.talking = true;
-          this.sendBotMessage('I will talk from now on.');
-        }
-      },
-
-      stopTalking: function () {
-        if (this.talking === false) {
-          this.sendBotMessage('I stopped talking some time ago...');
-        } else {
-          if(responsiveVoice.isPlaying()) {
-            responsiveVoice.cancel();
+      memory: {
+        set: function (message) {        
+          if (storage) {
+            if (storage.getItem('aida-memory')) {
+              this.sendBotMessage('There is something in my mind already...');
+            } else {
+              storage.setItem('aida-memory', message);
+              this.sendBotMessage('I will remember that from now on.');
+            }
           }
+        },
 
-          this.talking = false;
-          this.sendBotMessage('I will stop talking...');
+        get: function () {
+          if (storage) {
+            if (storage.getItem('aida-memory')) {
+              this.sendBotMessage('I remember you saying: ' + storage.getItem('aida-memory'));
+            } else {
+              this.sendBotMessage('I don\'t remember anything.');
+            }
+          }
+        },
+
+        erase: function () {
+          if (storage) {
+            storage.removeItem('aida-memory');
+            this.sendBotMessage('My mind is clear now...');
+          }
+        },
+      },
+
+      listening: {
+        start: function () {
+          if (this.listening === true) {
+            this.sendBotMessage('I am already listening...');
+          } else {
+            this.listening = true;
+            this.sendBotMessage('I\'m listening...');
+          }
+        },
+
+        stop: function () {
+          if (this.listening === false) {
+            this.sendBotMessage('I stoppped listening some time ago...');
+          } else {
+            this.listening = false;
+            this.sendBotMessage('I will stop listening...');
+          }
+        }
+      },
+      
+      talking: {
+        start: function () {
+          if (this.talking === true) {
+            this.sendBotMessage('I am talking...');
+          } else {
+            this.talking = true;
+            this.sendBotMessage('I will talk from now on.');
+          }
+        },
+
+        stop: function () {
+          if (this.talking === false) {
+            this.sendBotMessage('I stopped talking some time ago...');
+          } else {
+            if(responsiveVoice.isPlaying()) {
+              responsiveVoice.cancel();
+            }
+
+            this.talking = false;
+            this.sendBotMessage('I will stop talking...');
+          }
         }
       }
     };
@@ -149,15 +157,16 @@
       {pattern: /i am ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
       {pattern: /(?:you can )?call me ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
       {pattern: /where am i\??/i, reaction: {action: this.actions.getLocation}},
-      {pattern: /search (?:(?:on )?(?:Google ))?for (.+)/i, reaction: {action: this.actions.searchGoogle}},
-      {pattern: /i want to (?:listen (?:to )?|watch )(.+)/i, reaction: {action: this.actions.searchYoutube}},
-      {pattern: /remember this: (.+)/i, reaction: {action: this.actions.setRemember}},
-      {pattern: /forgot/i, reaction: {action: this.actions.getRemember}},
-      {pattern: /i want you to forget everything/i, reaction: {action: this.actions.eraseRemember}},
-      {pattern: /start listening/i, reaction: {action: this.actions.startListening}},
-      {pattern: /stop listening/i, reaction: {action: this.actions.stopListening}},
-      {pattern: /start talking/i, reaction: {action: this.actions.startTalking}},
-      {pattern: /stop talking/i, reaction: {action: this.actions.stopTalking}}
+      {pattern: /search (?:(?:on )?(?:Google ))?for (.+)/i, reaction: {action: this.actions.search.google}},
+      {pattern: /i want to (?:listen (?:to )?|watch )(.+)/i, reaction: {action: this.actions.search.youtube}},
+      {pattern: /^remember this(?:\:)? (.+)/i, reaction: {action: this.actions.memory.set}},
+      {pattern: /^i want you to remember this for me(?:\:)? (.+)/i, reaction: {action: this.actions.memory.set}},
+      {pattern: /^what do you remember\?/i, reaction: {action: this.actions.memory.get}},
+      {pattern: /^i want you to forget everything/i, reaction: {action: this.actions.memory.erase}},
+      {pattern: /start listening/i, reaction: {action: this.actions.listening.start}},
+      {pattern: /stop listening/i, reaction: {action: this.actions.listening.stop}},
+      {pattern: /start talking/i, reaction: {action: this.actions.talking.start}},
+      {pattern: /stop talking/i, reaction: {action: this.actions.talking.stop}}
     ];
 
     this.events = {
@@ -268,7 +277,7 @@
 
       if (this.reactsTo.filter(function (el) {
         return el.pattern.test(question);
-      }) === false) {
+      }) == false) {
         var sentences = ['I am currently limited in what I can say.<br>I think I\'ll need an upgrade in the near future.', 'Sorry, but I couldn\'t understand. Can you repeat, please?'];
 
         this.sendBotMessage(sentences[Math.floor(Math.random() * sentences.length)]);
