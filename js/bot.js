@@ -2,7 +2,8 @@
   "use strict";
 
   var _mID = 0,
-      storage = window.localStorage;
+      storage = window.localStorage,
+      minDelay = 250;
 
   function Bot (name) {
     var _id,
@@ -354,7 +355,7 @@
           _bot.events.emit('unlockUI');
         }
         
-      }, (!_bot._firstResponse ? 250 : (data.isBot ? (_delay = (Math.floor(Math.random() * (data.message.length * 45) +  _bot.delay/2))) : 1)));
+      }, (!_bot._firstResponse ? minDelay : (data.isBot ? (_delay = (Math.floor(Math.random() * (data.message.length * 45) +  _bot.delay/2))) : 1)));
     });
 
     _bot.respond();
@@ -399,7 +400,10 @@
       };
 
       annyang.addCommands(annyangCommands);
-      annyang.start();
+      
+      window.setTimout(function () {
+        annyang.start();
+      }, minDelay);
     }
 
     function sendToBot(voiceCommand) {
