@@ -6,7 +6,7 @@ She currently responds to the following expressions (both written and spoken):
 
 - ``Hello / Hi``
 - ``Who/What are you? / Tell me about yourself``
-- ``How are you? / What are you doing? / What's up?``
+- ``How are you? / What are you doing?``
 - ``My name is [your name here]``
 - ``I am [your name here]``
 - ``(You can) call me [your name here]``
