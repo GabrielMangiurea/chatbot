@@ -37,12 +37,18 @@
             <li><code>My name is <i>[your name here]</i></code></li>
             <li><code>I am <i>[your name here]</i></code></li>
             <li><code><i>(You can)</i> call me <i>[your name here]</i></code></li>
-            <li><code>You<i>['re/ are]</i> <i>(adverb)</i> <i>[nice/sweet/beautiful/awesome/great/super/epic]</i></code></li>
-            <li><code>Where am I?</code></li>
-            <li><code>Search <i>(on Google)</i> for <i>[search term(s) here]</i></code></li>
-            <li><code>I want to <i>(listen to/watch)</i> <i>[search term(s) here]</i></code></li>
-            <li><code>Start/stop listening/talking</i></code></li>
+            <div class="hidden-commands">
+              <li><code>You<i>['re/ are]</i> <i>(adverb)</i> <i>[nice/sweet/beautiful/awesome/great/super/epic]</i></code></li>
+              <li><code>I want you to remember this for me: / Remember this: <i>[sentence here]</i></code></li>
+              <li><code>What do you remember?</code></li>
+              <li><code>I want you to forget everything</i></code></li>
+              <li><code>Where am I?</code></li>
+              <li><code>Search <i>(on Google)</i> for <i>[search term(s) here]</i></code></li>
+              <li><code>I want to <i>(listen to/watch)</i> <i>[search term(s) here]</i></code></li>
+              <li><code>Start/stop listening/talking</i></code></li>
+            </div>
           </ul>
+          <a href="#" class="more" target="_self"></a>
           </p>
       </div>
     </div>
@@ -70,9 +76,24 @@
       </div>
     </div>
     </div>
+  <script src="../gabrielmangiurea.github.io/dist/ven/js/jquery.min.js"></script>
   <script src="js/annyang.min.js"></script>
   <script src="js/responsivevoice.min.js"></script>
   <script src="js/bot.js"></script>
+  <script>
+    $(function () {
+      $('.more').html('<span class="glyphicon glyphicon-chevron-down"></span> Show more');
+      
+      $('.more').on('click', function () {
+        $('.hidden-commands').slideToggle(400, function () {
+          $('.more').html(
+            ($(this).css('display') == 'none')
+            ? '<span class="glyphicon glyphicon-chevron-down"></span> Show more'
+            : '<span class="glyphicon glyphicon-chevron-up"></span> Show less');
+        });
+      });
+    });
+  </script>
 
   <!-- Google Analytics -->
   <script>

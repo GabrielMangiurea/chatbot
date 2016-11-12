@@ -32,6 +32,10 @@ a:visited {
   margin-top: 10px;
 }
 
+.hidden-commands {
+  display: none;
+}
+
 .bot-container [class^="col-"] {
   margin: 2px 0;
   padding: 0 1px;
