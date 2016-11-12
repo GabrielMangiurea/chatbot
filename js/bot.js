@@ -147,7 +147,7 @@
     };
 
     this.reactsTo = [
-      {pattern: /(?:\b)(?:hello|hi)(?:\b)/i, reaction: ['Hello there!', 'Hi!', 'Greetings!']},
+      {pattern: /^(?:hello|hi)/i, reaction: ['Hello there!', 'Hi!', 'Greetings!']},
       {pattern: /(?:who|what) are you\?$/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.']},
       {pattern: /tell me about yourself/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.']},
       {pattern: /(?:how are you\??|what are you doing\??|what&#39;s up\?)/i, reaction: ['I\'m fine, thank you!', 'I am doing pretty well.', 'I\'m chatting with you.']},
