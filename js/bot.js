@@ -109,10 +109,6 @@
             this.listening = true;
             this.sendBotMessage('I\'m listening...');
           }
-
-          window.setTimeout(function () {
-            annyang.start();
-          }, 1000);
         },
 
         stop: function () {
@@ -160,7 +156,7 @@
       {pattern: /(?:who|what) are you\??$/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.']},
       {pattern: /tell me about yourself/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.']},
       {pattern: /(?:how are you\??|what are you doing\??)/i, reaction: ['I\'m fine, thank you!', 'I am doing pretty well.', 'I\'m chatting with you.']},
-      {pattern: /you(?:\&#39;re| are)(?:\s[a-z]+)?\s(nice|sweet|beautiful|awesome|great|super|epic)/i, reaction: ['Thank you!', 'That\'s very nice of you to say that!', 'No, you are ##1!']},
+      {pattern: /you are(?:\s[a-z]+)?\s(nice|sweet|beautiful|awesome|great|super|epic)/i, reaction: ['Thank you!', 'That\'s very nice of you to say that!', 'No, you are ##1!']},
       {pattern: /gabriel mangiurea/i, reaction: ['Gabriel Mangiurea is my creator.<br>He is a web developer from Bucharest, Romania.<br>You can visit his website at <a href="https://gabrielmangiurea.github.io">gabrielmangiurea.github.io</a>.']},
       {pattern: /my name is ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
       {pattern: /i am ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
@@ -326,7 +322,9 @@
         message: data.message
       });
 
-      annyang.abort();
+      if (annyang) {
+        annyang.abort();
+      }  
     });
 
     _bot.events.register('updateUI', function (ev, data) {
@@ -363,7 +361,7 @@
               );
             }
           } else {
-            if (_bot.listening && !_bot._firstResponse) {
+            if (_bot.listening && _bot._firstResponse) {
               annyang.start();
             }  
           }
@@ -412,16 +410,8 @@
       _bot.respond(userMessage);
     });
 
-    if(annyang && _bot.listening === true) {
-      var annyangCommands = {
-        '*voiceCommand': sendToBot
-      };
-
-      annyang.addCommands(annyangCommands);
-
-      if (responsiveVoice.isPlaying() == false) {
-        annyang.start();
-      }
+    if(annyang) {
+      annyang.addCommands({'*voiceCommand': sendToBot});
     }
 
     function sendToBot(voiceCommand) {
