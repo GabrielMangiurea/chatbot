@@ -13,7 +13,7 @@
 
     this.listening = true;
     this.talking = true;
-    
+
     this.container = document.querySelector('.bot-container');
 
     this.delay = 500;
@@ -27,7 +27,7 @@
 
         this.userName = newName;
 
-        this.sendBotMessage(greet[Math.floor(Math.random() * greet.length)] + ', ' + this.userName + '!');
+        this.sendBotMessage(greet[Math.floor(Math.random() * greet.length)] + ', ' + this.userName + '!', null);
       },
 
       getLocation: function () {
@@ -67,7 +67,7 @@
           this.sendBotMessage('Your browser prevented me to open a new window with the results. Please check the pop-up blocker.');
         }
       },
-      
+
       startListening: function () {
         if (this.listening === true) {
           this.sendBotMessage('I already listen...');
@@ -76,7 +76,7 @@
           this.sendBotMessage('I\'m listening...');
         }
       },
-      
+
       stopListening: function () {
         if (this.listening === false) {
           this.sendBotMessage('I stoppped listening some time ago...');
@@ -85,7 +85,7 @@
           this.sendBotMessage('I will stop listening...');
         }
       },
-      
+
       startTalking: function () {
         if (this.talking === true) {
           this.sendBotMessage('I am talking...')
@@ -94,7 +94,7 @@
           this.sendBotMessage('I will talk from now on.');
         }
       },
-      
+
       stopTalking: function () {
         if (this.talking === false) {
           this.sendBotMessage('I stopped talking some time ago...');
@@ -102,7 +102,7 @@
           if(responsiveVoice.isPlaying()) {
             responsiveVoice.cancel();
           }
-          
+
           this.talking = false;
           this.sendBotMessage('I will stop talking...');
         }
@@ -114,6 +114,7 @@
       {pattern: /(?:who|what) are you\?$/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.']},
       {pattern: /tell me about yourself/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.']},
       {pattern: /(?:how are you\??|what are you doing\??|what&#39;s up\?)/i, reaction: ['I\'m fine, thank you!', 'I am doing pretty well.', 'I\'m chatting with you.']},
+      {pattern: /you(?:\&#39;re| are)(?:\s[a-z]+)?\s(nice|sweet|beautiful|awesome|great|super|epic)/i, reaction: ['Thank you!', 'That\'s very nice of you to say that!', 'No, you are ##1.']},
       {pattern: /gabriel mangiurea/i, reaction: ['Gabriel Mangiurea is my creator.<br>He is a web developer from Bucharest, Romania.<br>You can visit his website at <a href="https://gabrielmangiurea.github.io">gabrielmangiurea.github.io</a>.']},
       {pattern: /my name is ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
       {pattern: /i am ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
@@ -173,20 +174,22 @@
       }
     };
   }
-  
-  Bot.prototype.sendBotMessage = function (message) {
+
+  Bot.prototype.sendBotMessage = function (message, captured = null) {
     this.events.emit('message', {
       id: (_mID++),
       isBot: true,
       date: new Date(),
-      message: message
+      message: (captured == null) ? message : message.replace(/##(\d)+/, function (match) {
+        return captured[match.replace('##', '') - 1];
+      })
     });
   }
-  
+
   Bot.prototype.respond = function (question) {
     if (!question && !this._firstResponse) {
       this.sendBotMessage('Hello! I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.<br>Let\'s talk!');
-      
+
       this._firstResponse = true;
 
     } else if (question && this._firstResponse) {
@@ -197,7 +200,14 @@
 
         if (_r.pattern && _m) {
           var isObject = (typeof _r.reaction === 'object' ? true : false),
-              isArray  = Array.isArray(_r.reaction);
+              isArray  = Array.isArray(_r.reaction),
+              args = [];
+
+          for (var key in _m) {
+            if (key > 0) {
+              args.push(_m[key]);
+            }
+          }
 
           if (isObject && !isArray) { 
             if (!_r.reaction.action) {
@@ -206,7 +216,7 @@
             } else {
               this.events.emit('action', {
                 action: _r.reaction.action,
-                params: _m.slice(1)
+                params: (args.length > 1) ? args : args[0]
               });
             }
           } else if (isObject && isArray) {
@@ -214,7 +224,8 @@
               console.error((this.prefix ? this.prefix : '[BOT] ') + 'Error: supply a response for ' + _r.pattern + '!');
               return;
             } else {
-              this.sendBotMessage(_r.reaction[Math.floor(Math.random() * _r.reaction.length)]);
+              this.sendBotMessage(_r.reaction[Math.floor(Math.random() * _r.reaction.length)], 
+                                  (args.length < 1) ? null : args);
             }
           } else {
             return;
@@ -241,7 +252,11 @@
           params = data.params;
 
       window.setTimeout(function () {
-        action.bind(_bot).apply(null, params);
+        if (typeof data.params !== 'object') {
+          action.bind(_bot).call(null, params);
+        } else {
+          action.bind(_bot).apply(null, params);
+        }
       }, _bot.delay);
 
       if (_bot.executionMessage) {
@@ -278,11 +293,15 @@
         _view.appendChild(element);
         _view.scrollTop = _view.scrollHeight - _view.clientHeight;
         window.scrollTop = window.scrollHeight - window.clientHeight;
-        
+
         if (responsiveVoice.voiceSupport()) {
           if (_bot.talking && (data.isBot === true)) {
             responsiveVoice.speak(data.message.replace(/<(.|\n)*?>/g, ' '), 'UK English Female');
           }
+        }
+        
+        if (data.isBot) {
+          _bot.events.emit('unlockUI');
         }
         
       }, (!_bot._firstResponse ? 250 : (data.isBot ? (_delay = (Math.floor(Math.random() * (data.message.length * 45) +  _bot.delay/2))) : 1)));
@@ -316,12 +335,12 @@
 
       _bot.respond(userMessage);
 
-      window.setTimeout(function () {
+      _bot.events.register('unlockUI', function () {
         userInput.disabled = false;
         userInput.value = '';
         userInput.focus();
         submitBtn.disabled = false;
-      }, (_delay ? _delay : _bot.delay));
+      });
     });
 
     if(annyang && _bot.listening) {
@@ -340,7 +359,7 @@
         date: new Date(),
         message: voiceCommand
       });
-      
+
       _bot.respond(voiceCommand);
     }
   });
