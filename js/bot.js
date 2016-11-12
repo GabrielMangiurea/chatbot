@@ -379,10 +379,6 @@
         return;
       }
 
-      userInput.disabled = true;
-      userInput.value = 'Waiting for ' + _bot.name + ' to respond...';
-      submitBtn.disabled = true; 
-
       _bot.events.emit('message', {
         id: (_mID++),
         isBot: false,
@@ -390,8 +386,16 @@
         message: userMessage
       });
 
+      _bot.events.emit('lockUI');
+      
       _bot.respond(userMessage);
 
+      _bot.events.register('lockUI', function () {
+        userInput.disabled = true;
+        userInput.value = 'Waiting for ' + _bot.name + ' to respond...';
+        submitBtn.disabled = true;
+      });
+      
       _bot.events.register('unlockUI', function () {
         userInput.disabled = false;
         userInput.value = '';
@@ -419,7 +423,9 @@
         date: new Date(),
         message: voiceCommand
       });
-
+      
+      _bot.emit.events('lockUI');
+      
       _bot.respond(voiceCommand);
     }
   });
