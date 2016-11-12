@@ -121,7 +121,7 @@
           } else {
             this.sendBotMessage('I will stop listening...');
             this.listening = false;
-            
+
             annyang.abort();
           }
         }
@@ -141,12 +141,12 @@
           if (this.talking === false) {
             this.sendBotMessage('I stopped talking some time ago...');
           } else {
-            if(responsiveVoice.isPlaying) {
+            if(responsiveVoice.isPlaying()) {
               responsiveVoice.cancel();
             }
-            
+
             this.sendBotMessage('I will stop talking...');
-            
+
             window.setTimeout(function () {
               _this.talking = false;
             }, 1000);
@@ -352,14 +352,20 @@
         if (responsiveVoice.voiceSupport()) {
           if (_bot.talking) {
             if (data.isBot === true) {
-              responsiveVoice.speak(data.message.replace(/<(.|\n)*?>/g, ' '), 'UK English Female', {onend: function () {
-                                                                                                      annyang.start();
-                                                                                                    }
-                                                                                                   }
+              responsiveVoice.speak(
+                data.message.replace(/<(.|\n)*?>/g, ' '),
+                'UK English Female',
+                {onend: function () {
+                  if (_bot.listening) {
+                    annyang.start();
+                  }
+                }}
               );
             }
           } else {
-            annyang.start();
+            if (_bot.listening) {
+              annyang.start();
+            }  
           }
         }
 
@@ -406,14 +412,14 @@
       _bot.respond(userMessage);
     });
 
-    if(annyang && _bot.listening == true) {
+    if(annyang && _bot.listening === true) {
       var annyangCommands = {
         '*voiceCommand': sendToBot
       };
 
       annyang.addCommands(annyangCommands);
 
-      if (responsiveVoice.isPlaying == false) {
+      if (responsiveVoice.isPlaying() == false) {
         annyang.start();
       }
     }
