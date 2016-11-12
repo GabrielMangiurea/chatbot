@@ -10,7 +10,8 @@ She currently responds to the following expressions (both written and spoken):
 - ``My name is [your name here]``
 - ``I am [your name here]``
 - ``(You can) call me [your name here]``
+- `` You['re/ are] (adverb) [nice/sweet/beautiful/awesome/great/super/epic]``
 - ``Where am I?``
 - ``Search (on Google) for [search term(s) here]``
-- ``I want to (listen to/watch) [search term(s) here]``
+- ``I want to [listen to/watch] [search term(s) here]``
 - ``Start/stop listening/talking``
