@@ -108,9 +108,10 @@
             this.sendBotMessage('I am already listening...');
           } else {
             this.listening = true;
-            annyang.start();
             this.sendBotMessage('I\'m listening...');
           }
+          
+          annyang.start();
         },
 
         stop: function () {
@@ -118,9 +119,10 @@
             this.sendBotMessage('I stoppped listening some time ago...');
           } else {
             this.listening = false;
-            annyang.abort();
             this.sendBotMessage('I will stop listening...');
           }
+          
+          annyang.abort();
         }
       },
       
@@ -138,12 +140,12 @@
           if (this.talking === false) {
             this.sendBotMessage('I stopped talking some time ago...');
           } else {
-            if(responsiveVoice.isPlaying()) {
-              responsiveVoice.cancel();
-            }
-
             this.talking = false;
             this.sendBotMessage('I will stop talking...');
+          }
+          
+          if(responsiveVoice.isPlaying()) {
+              responsiveVoice.cancel();
           }
         }
       }
@@ -151,9 +153,9 @@
 
     this.reactsTo = [
       {pattern: /^(?:hello|hi)/i, reaction: ['Hello there!', 'Hi!', 'Greetings!']},
-      {pattern: /(?:who|what) are you\?$/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.']},
+      {pattern: /(?:who|what) are you\??$/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.']},
       {pattern: /tell me about yourself/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.']},
-      {pattern: /(?:how are you\??|what are you doing\??|what&#39;s up\?)/i, reaction: ['I\'m fine, thank you!', 'I am doing pretty well.', 'I\'m chatting with you.']},
+      {pattern: /(?:how are you\??|what are you doing\??|what&#39;s up\??)/i, reaction: ['I\'m fine, thank you!', 'I am doing pretty well.', 'I\'m chatting with you.']},
       {pattern: /you(?:\&#39;re| are)(?:\s[a-z]+)?\s(nice|sweet|beautiful|awesome|great|super|epic)/i, reaction: ['Thank you!', 'That\'s very nice of you to say that!', 'No, you are ##1!']},
       {pattern: /gabriel mangiurea/i, reaction: ['Gabriel Mangiurea is my creator.<br>He is a web developer from Bucharest, Romania.<br>You can visit his website at <a href="https://gabrielmangiurea.github.io">gabrielmangiurea.github.io</a>.']},
       {pattern: /my name is ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
@@ -162,9 +164,9 @@
       {pattern: /where am i\??/i, reaction: {action: this.actions.getLocation}},
       {pattern: /search (?:(?:on )?(?:Google ))?for (.+)/i, reaction: {action: this.actions.search.google}},
       {pattern: /i want to (?:listen (?:to )?|watch )(.+)/i, reaction: {action: this.actions.search.youtube}},
-      {pattern: /^remember this(?:\:)? (.+)/i, reaction: {action: this.actions.memory.set}},
-      {pattern: /^i want you to remember this for me(?:\:)? (.+)/i, reaction: {action: this.actions.memory.set}},
-      {pattern: /^what do you remember\?/i, reaction: {action: this.actions.memory.get}},
+      {pattern: /^remember this\:? (.+)/i, reaction: {action: this.actions.memory.set}},
+      {pattern: /^i want you to remember this for me\:? (.+)/i, reaction: {action: this.actions.memory.set}},
+      {pattern: /^what do you remember\??/i, reaction: {action: this.actions.memory.get}},
       {pattern: /^i want you to forget everything/i, reaction: {action: this.actions.memory.erase}},
       {pattern: /start listening/i, reaction: {action: this.actions.listening.start}},
       {pattern: /stop listening/i, reaction: {action: this.actions.listening.stop}},
@@ -345,7 +347,9 @@
           if (_bot.talking && (data.isBot === true)) {
             responsiveVoice.speak(data.message.replace(/<(.|\n)*?>/g, ' '), 'UK English Female',
                                   {onend: function () {
-                                    annyang.start();
+                                    if (_bot.listening) {
+                                      annyang.start();
+                                    }
                                   }}
                                  );
           }
@@ -401,7 +405,7 @@
 
       annyang.addCommands(annyangCommands);
       
-      window.setTimout(function () {
+      window.setTimeout(function () {
         annyang.start();
       }, minDelay);
     }
