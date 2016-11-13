@@ -10,7 +10,7 @@ She currently responds to the following expressions (both written and spoken):
 - ``My name is [your name here]``
 - ``I am [your name here]``
 - ``(You can) call me [your name here]``
-- ``You['re/ are] (adverb) [nice/sweet/beautiful/awesome/great/super/epic]``
+- ``You are (adverb) [nice/sweet/beautiful/awesome/great/super/epic]``
 - ``I want you to remember this for me: / Remember this: [sentence here]``
 - ``What do you remember?``
 - ``I want you to forget everything``
