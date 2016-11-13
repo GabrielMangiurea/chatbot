@@ -143,6 +143,10 @@
           if (this.talking === true) {
             this.sendBotMessage('I am talking...');
           } else {
+            if (annyang.isListening()) {
+              annyang.abort();
+            }
+            
             this.talking = true;
             this.sendBotMessage('I will talk from now on.');
           }
@@ -342,7 +346,7 @@
         message: data.message
       });
 
-      if (annyang) {
+      if (annyang.isListening()) {
         annyang.abort();
       }  
     });
