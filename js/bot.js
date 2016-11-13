@@ -41,7 +41,7 @@
             if(window.open('https://www.google.com/maps/@' + position.coords.latitude + ',' + position.coords.longitude + ',17z')) {
               _message = 'You are around the following coordinates: ' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + '.<br>I opened Google Maps for you in another window.';
             } else {
-              _message = 'You are around the following coordinates: ' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + '.<br>Your browser prevented me to open Google Maps. Please check the pop-up blocker.';
+              _message = 'You are around the following coordinates: ' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + '.<br>I couldn\'t open Google Maps. Please check your browser settings.';
             }
 
             _this.sendBotMessage(_message);
@@ -58,7 +58,7 @@
           if(window.open('https://www.google.com/search?q=' + encodeURI(query))) {
             this.sendBotMessage('I searched on Google for "' + query + '" and opened a new window with the results.');
           } else {
-            this.sendBotMessage('Your browser prevented me to open a new window with the results. Please check the pop-up blocker.');
+            this.sendBotMessage('I couldn\'t open a new window with the results. Please check your browser settings.');
           }
         },
 
@@ -66,7 +66,7 @@
           if(window.open('https://www.youtube.com/results?search_query=' + encodeURI(query))) {
             this.sendBotMessage('I searched on Youtube for "' + query + '" and opened a new window with the results.');
           } else {
-            this.sendBotMessage('Your browser prevented me to open a new window with the results. Please check the pop-up blocker.');
+            this.sendBotMessage('I couldn\'t open a new window with the results. Please check your browser settings.');
           }
         }
       },
@@ -103,6 +103,11 @@
 
       listening: {
         start: function () {
+          if (!annyang) {
+            this.sendBotMessage('I am having trouble listening on this browser. I suggest you to use Google Chrome.');
+            return;
+          }
+          
           if (this.listening === true) {
             this.sendBotMessage('I am already listening...');
           } else {
@@ -112,6 +117,11 @@
         },
 
         stop: function () {
+          if (!annyang) {
+            this.sendBotMessage('I am having trouble listening on this browser. I suggest you to use Google Chrome.');
+            return;
+          }
+          
           if (this.listening === false) {
             this.sendBotMessage('I stoppped listening some time ago...');
           } else {
@@ -125,6 +135,11 @@
 
       talking: {
         start: function () {
+          if (responsiveVoice.voiceSupport() == false) {
+            this.sendBotMessage('I am having trouble talking on this browser. I suggest you to use Google Chrome.');
+            return;
+          }
+          
           if (this.talking === true) {
             this.sendBotMessage('I am talking...');
           } else {
@@ -134,6 +149,11 @@
         },
 
         stop: function () {
+          if (responsiveVoice.voiceSupport() == false) {
+            this.sendBotMessage('I am having trouble talking on this browser. I suggest you to use Google Chrome.');
+            return;
+          }
+          
           if (this.talking === false) {
             this.sendBotMessage('I stopped talking some time ago...');
           } else {
