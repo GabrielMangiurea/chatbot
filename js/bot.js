@@ -22,6 +22,7 @@
     this.delay = 500;
 
     this.executionMessage = false;
+    this.commandQueue = {};
     this._firstResponse = false;
 
     this.actions = {
@@ -176,26 +177,27 @@
     };
 
     this.reactsTo = [
-      {pattern: /^(?:hello|hi)/i, reaction: ['Hello there!', 'Hi!', 'Greetings!']},
-      {pattern: /(?:who|what) are you\??$/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.']},
-      {pattern: /tell me about yourself/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.']},
-      {pattern: /(?:how are you\??|what are you doing\??)/i, reaction: ['I\'m fine, thank you!', 'I am doing pretty well.', 'I\'m chatting with you.']},
-      {pattern: /you are(?:\s[a-z]+)?\s(nice|sweet|beautiful|awesome|great|super|epic)/i, reaction: ['Thank you!', 'That\'s very nice of you to say that!', 'No, you are ##1!']},
-      {pattern: /gabriel mangiurea/i, reaction: ['Gabriel Mangiurea is my creator.<br>He is a web developer from Bucharest, Romania.<br>You can visit his website at <a href="https://gabrielmangiurea.github.io">gabrielmangiurea.github.io</a>.']},
-      {pattern: /my name is ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
-      {pattern: /i am ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
-      {pattern: /(?:you can )?call me ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}},
-      {pattern: /where am i\??/i, reaction: {action: this.actions.getLocation}},
-      {pattern: /search (?:(?:on )?(?:Google ))?for (.+)/i, reaction: {action: this.actions.search.google}},
-      {pattern: /i want to (?:listen (?:to )?|watch )(.+)/i, reaction: {action: this.actions.search.youtube}},
-      {pattern: /^remember this\:? (.+)/i, reaction: {action: this.actions.memory.set}},
-      {pattern: /^i want you to remember this for me\:? (.+)/i, reaction: {action: this.actions.memory.set}},
-      {pattern: /^what do you remember\??/i, reaction: {action: this.actions.memory.get}},
-      {pattern: /^i want you to forget everything/i, reaction: {action: this.actions.memory.erase}},
-      {pattern: /start listening/i, reaction: {action: this.actions.listening.start}},
-      {pattern: /stop listening/i, reaction: {action: this.actions.listening.stop}},
-      {pattern: /start talking/i, reaction: {action: this.actions.talking.start}},
-      {pattern: /stop talking/i, reaction: {action: this.actions.talking.stop}}
+      {pattern: /^(?:hello|hi)/i, reaction: ['Hello there!', 'Hi!', 'Greetings!'], description: 'greet me', confirm: false, special: false},
+      {pattern: /(?:who|what) are you\??$/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.'], description: 'ask me who I am', confirm: false, special: false},
+      {pattern: /tell me about yourself/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.'], description: 'ask me who I am', confirm: false, special: false},
+      {pattern: /(?:how are you\??|what are you doing\??)/i, reaction: ['I\'m fine, thank you!', 'I am doing pretty well.', 'I\'m chatting with you.'], description: 'ask me how I feel', confirm: false, special: false},
+      {pattern: /you are(?:\s[a-z]+)?\s(nice|sweet|beautiful|awesome|great|super|epic)/i, reaction: ['Thank you!', 'That\'s very nice of you to say that!', 'No, you are ##1!'], description: 'compliment me', confirm: false, special: false},
+      {pattern: /gabriel mangiurea/i, reaction: ['Gabriel Mangiurea is my creator.<br>He is a web developer from Bucharest, Romania.<br>You can visit his website at <a href="https://gabrielmangiurea.github.io">gabrielmangiurea.github.io</a>.'], description: 'ask about my creator', confirm: false, special: false},
+      {pattern: /my name is ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}, description: 'change your name', confirm: false, special: false},
+      {pattern: /i am ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}, description: 'change your name', confirm: false, special: false},
+      {pattern: /(?:you can )?call me ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}, description: 'change your name', confirm: false, special: false},
+      {pattern: /where am i\??/i, reaction: {action: this.actions.getLocation}, description: 'find your location', confirm: false, special: false},
+      {pattern: /search (?:(?:on )?(?:Google ))?for (.+)/i, reaction: {action: this.actions.search.google}, description: 'search on Google', confirm: false, special: false},
+      {pattern: /i want to (?:listen (?:to )?|watch )(.+)/i, reaction: {action: this.actions.search.youtube}, description: 'search on Youtube', confirm: false, special: false},
+      {pattern: /^remember this\:? (.+)/i, reaction: {action: this.actions.memory.set}, description: 'remember something', confirm: false, special: false},
+      {pattern: /^i want you to remember this for me\:? (.+)/i, reaction: {action: this.actions.memory.set}, description: 'remember something', confirm: false, special: false},
+      {pattern: /^what do you remember\??/i, reaction: {action: this.actions.memory.get}, description: 'ask me about my memories', confirm: false, special: false},
+      {pattern: /^i want you to forget everything/i, reaction: {action: this.actions.memory.erase}, description: 'erase my memory', confirm: false, special: false},
+      {pattern: /start listening/i, reaction: {action: this.actions.listening.start}, description: 'start listening you', confirm: false, special: false},
+      {pattern: /stop listening/i, reaction: {action: this.actions.listening.stop}, description: 'stop listening you', confirm: false, special: false},
+      {pattern: /start talking/i, reaction: {action: this.actions.talking.start}, description: 'start talking', confirm: false, special: false},
+      {pattern: /stop talking/i, reaction: {action: this.actions.talking.stop}, description: 'stop talking', confirm: false, special: false},
+      {pattern: /(?:yes|no)/i, reaction: null, description: null, confirm: false, special: true}
     ];
 
     this.events = {
@@ -279,26 +281,58 @@
             }
           }
 
-          if (isObject && !isArray) { 
-            if (!_r.reaction.action) {
-              console.error((this.prefix ? this.prefix : '[BOT] ') + 'Error: supply a function for ' + _r.pattern + '!');
-              return;
+          if  (_r.special) {
+            if (this.commandQueue.action && this.commandQueue.args) {
+              switch (_m[0].toLowerCase()) {
+                case 'yes':
+                  this.events.emit('action', {
+                    action: this.commandQueue.action,
+                    params: (this.commandQueue.args.length > 1) ? this.commandQueue.args : this.commandQueue.args[0]
+                  });
+                  break;
+                  
+                case 'no':
+                  this.sendBotMessage('I will not execute that function');
+                  break;
+                  
+                default:
+                  this.sendBotMessage('Please respond with yes or no next time!');
+                  break;
+              }
+              
+              this.commandQueue = {};
             } else {
-              this.events.emit('action', {
-                action: _r.reaction.action,
-                params: (args.length > 1) ? args : args[0]
-              });
+              this.sendBotMessage('What are you trying to confirm?');
             }
-          } else if (isObject && isArray) {
-            if (!_r.reaction.length) {
-              console.error((this.prefix ? this.prefix : '[BOT] ') + 'Error: supply a response for ' + _r.pattern + '!');
-              return;
+            
+          } else {            
+            if (isObject && !isArray) { 
+              if (!_r.reaction.action && !_r.special) {
+                console.error((this.prefix ? this.prefix : '[BOT] ') + 'Error: supply a function for ' + _r.pattern + '!');
+                return;
+              } else {
+                if (!_r.confirm) {
+                  this.events.emit('action', {
+                    action: _r.reaction.action,
+                    params: (args.length > 1) ? args : args[0]
+                  });
+                } else {
+                  this.sendBotMessage('Are you sure that you want to ' + _r.description + '?');
+                  this.commandQueue.action = _r.reaction.action;
+                  this.commandQueue.args = args;
+                }
+              }
+            } else if (isObject && isArray) {
+              if (!_r.reaction.length && !_r.special) {
+                console.error((this.prefix ? this.prefix : '[BOT] ') + 'Error: supply a response for ' + _r.pattern + '!');
+                return;
+              } else {
+                this.sendBotMessage(_r.reaction[Math.floor(Math.random() * _r.reaction.length)], 
+                                    (args.length < 1) ? null : args);
+              }
             } else {
-              this.sendBotMessage(_r.reaction[Math.floor(Math.random() * _r.reaction.length)], 
-                                  (args.length < 1) ? null : args);
+              return;
             }
-          } else {
-            return;
           }
         }
       }
