@@ -198,7 +198,7 @@
       {pattern: /stop listening/i, reaction: {action: this.actions.listening.stop}, description: 'me to stop listening you', confirm: false, special: false},
       {pattern: /start talking/i, reaction: {action: this.actions.talking.start}, description: 'me to start talking', confirm: false, special: false},
       {pattern: /stop talking/i, reaction: {action: this.actions.talking.stop}, description: 'me to stop talking', confirm: false, special: false},
-      {pattern: /(?:yes|no)/i, reaction: null, description: null, confirm: false, special: true}
+      {pattern: /(?:\b)(?:yes|no)(?:\b)/i, reaction: null, description: null, confirm: false, special: true}
     ];
 
     this.events = {
@@ -293,7 +293,7 @@
                   break;
                   
                 case 'no':
-                  this.sendBotMessage('I will not execute that function');
+                  this.sendBotMessage('Let\'s continue chatting then...');
                   break;
                   
                 default:
