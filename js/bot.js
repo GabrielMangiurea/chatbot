@@ -129,13 +129,13 @@
             headers: { 'Api-User-Agent': 'Aida-chatbot; Contact: mangiurea.gabriel@gmail.com' },
             success: function (data, textStatus, jqXHR) {
               var title = data[1][0],
-                  extract = data[2][0].replace(/\(.+\)/g, ''),
+                  extract = data[2][0],
                   link = data[3][0];
               
               if (extract == undefined) {
                 _this.sendBotMessage('I couldn\'t find out anything about ' + query + '.');
               } else {
-                _this.sendBotMessage(extract + '<br>You can read more about ' + title + ' on <a href="' + link + '">Wikipedia</a>.');
+                _this.sendBotMessage(extract.replace(/\(.+\)/g, '') + '<br>You can read more about ' + title + ' on <a href="' + link + '">Wikipedia</a>.');
               }
             },
             error: function (error) {
@@ -496,7 +496,7 @@
               responsiveVoice.speak(
                 data.message.replace(/<(.|\n)*?>/g, ' '),
                 'UK English Female',
-                {onend: function () {
+                {rate: 1.08, onend: function () {
                   if (_bot.listening) {
                     annyang.start();
                   }
