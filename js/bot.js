@@ -115,27 +115,32 @@
         },
 
         wikipedia: function (query) {
+          if (!window.jQuery) {
+            this.sendBotMessage('I cannot access the requested information.<br>Please report this issue to my creator.');
+            return;
+          }
+          
           $.ajax({
             type: "GET",
-            url: "https://en.wikipedia.org/w/api.php?action=opensearch&format=json&search=" + encodeURIComponent(query) + "&namespace=0&limit=1&utf8=trueredirects=return",
+            url: "https://en.wikipedia.org/w/api.php?action=opensearch&format=json&search=" + encodeURIComponent(query) + "&namespace=0&limit=1&utf8=true&callback=?",
             contentType: "application/json; charset=utf-8",
             async: false,
             dataType: "json",
             headers: { 'Api-User-Agent': 'Aida-chatbot; Contact: mangiurea.gabriel@gmail.com' },
             success: function (data, textStatus, jqXHR) {
-              var data = data[0],
-                  extract = data[2],
-                  link = data[3];
-
-              if (extract.length < 1) {
+              var title = data[1][0],
+                  extract = data[2][0].replace(/\(.+\)/g, ''),
+                  link = data[3][0];
+              
+              if (extract == undefined) {
                 _this.sendBotMessage('I couldn\'t find out anything about ' + query + '.');
               } else {
-                _this.sendBotMessage(extract);
+                _this.sendBotMessage(extract + '<br>You can read more about ' + title + ' on <a href="' + link + '">Wikipedia</a>.');
               }
             },
             error: function (error) {
               _this.sendBotMessage('I encountered an error during research. I will try again later.');
-              console.log("Wikipedia API Error (see below)");
+              console.error((this.prefix ? this.prefix : '[BOT] ') + 'Error: Wikipedia API error (see below)');
               console.log(error);
             }
           });
@@ -261,7 +266,7 @@
       {pattern: /where am i\??/i, reaction: {action: this.actions.getLocation}, description: 'me to find your location', confirm: false, special: false},
       {pattern: /search (?:(?:on )?(?:Google ))?for (.+)/i, reaction: {action: this.actions.search.google}, description: 'me to search on Google', confirm: false, special: false},
       {pattern: /i want to (?:listen (?:to )?|watch )(.+)/i, reaction: {action: this.actions.search.youtube}, description: 'me to search on Youtube', confirm: false, special: false},
-      {pattern: /tell me about (.+)/i, reaction: {action: this.actions.search.wikipedia}, description: 'me to search on Wikipedia', confirm: false, special: false},
+      {pattern: /tell me something about (.+)/i, reaction: {action: this.actions.search.wikipedia}, description: 'me to search on Wikipedia', confirm: false, special: false},
       {pattern: /^remember this\:? (.+)/i, reaction: {action: this.actions.memory.set}, description: 'me to remember something', confirm: false, special: false},
       {pattern: /^i want you to remember this for me\:? (.+)/i, reaction: {action: this.actions.memory.set}, description: 'me to remember something', confirm: false, special: false},
       {pattern: /^what do you remember\??/i, reaction: {action: this.actions.memory.get}, description: 'to ask me about my memories', confirm: false, special: false},
