@@ -44,22 +44,25 @@
         date: function (date) {
           var dateObject = new Date(date),
               today = new Date();
-
+          
           if (dateObject == "Invalid Date") {
-            this.sendBotMessage('This is an invalid date...');
+            this.sendBotMessage('This is an invalid date.<br>Please use the following format: month day year.<br>i.e. Jan 01 2016.');
           }
 
           else {
-            if (dateObject.getYear() < today.getYear()) {
-              this.sendBotMessage('It was ' + this.actions.getDay.calculateDay(dateObject.getDay()) + ' on ' + date + '.');
+            if (dateObject.getDay() === today.getDay() &&
+               dateObject.getMonth() === today.getMonth() &&
+               dateObject.getYear() === today.getYear()) {
+              
+              this.sendBotMessage('Today is ' + this.actions.getDay.calculateDay(dateObject.getDay()) + '.');
+            }
+            
+            else if (dateObject < today) {
+              this.sendBotMessage('It was ' + this.actions.getDay.calculateDay(dateObject.getDay()) + ' on ' + dateObject.toDateString().replace(/^[a-z]+ /i, '') + '.');
             } 
 
-            else if (dateObject.getYear() > today.getYear()) {
-              this.sendBotMessage('It will be ' + this.actions.getDay.calculateDay(dateObject.getDay()) + ' on ' + date + '.');
-            }
-
             else {
-              this.sendBotMessage('Today is ' + this.actions.getDay.calculateDay(dateObject.getDay()) + '.');
+              this.sendBotMessage('It will be ' + this.actions.getDay.calculateDay(dateObject.getDay()) + ' on ' + dateObject.toDateString().replace(/^[a-z]+ /i, '') + '.');
             }
           }
         },
@@ -117,6 +120,8 @@
         wikipedia: function (query) {
           if (!window.jQuery) {
             this.sendBotMessage('I cannot access the requested information.<br>Please report this issue to my creator.');
+            return;
+          } else if (query.match(/gabriel mangiurea/i) != null) {
             return;
           }
           
@@ -268,7 +273,7 @@
       {pattern: /i am ([a-z ]+)/i, reaction: {action: this.actions.changeName}, description: 'me to change your name', confirm: false, special: false},
       {pattern: /(?:you can )?call me ([a-z ]+)/i, reaction: {action: this.actions.changeName}, description: 'me to change your name', confirm: false, special: false},
       {pattern: /what day is (?:today|this day|it)\??/i, reaction: {action: this.actions.getDay.today}, description: 'me to say the day', confirm: false, special: false},
-      {pattern: /what day (?:was|will be) on ([a-z0-9\.\,\- ]+)\??/i, reaction: {action: this.actions.getDay.date}, description: 'me to say the day', confirm: false, special: false},
+      {pattern: /what day (?:was|will be) on ((?:\d{1,2}|[a-z]+)(?:\s)(?:\d{1,2}|[a-z]+)(?:\s)(?:\d{2,4}))\??/i, reaction: {action: this.actions.getDay.date}, description: 'me to say the day', confirm: false, special: false},
       {pattern: /where am i\??/i, reaction: {action: this.actions.getLocation}, description: 'me to find your location', confirm: false, special: false},
       {pattern: /search (?:(?:on )?(?:Google ))?for (.+)/i, reaction: {action: this.actions.search.google}, description: 'me to search on Google', confirm: false, special: false},
       {pattern: /i want to (?:listen (?:to )?|watch )(.+)/i, reaction: {action: this.actions.search.youtube}, description: 'me to search on Youtube', confirm: false, special: false},

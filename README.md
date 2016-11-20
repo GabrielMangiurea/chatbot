@@ -20,4 +20,4 @@ She currently responds to the following expressions (both written and spoken):
 - ``Tell me something about [term here]``
 - ``Start/stop listening/talking``
 - ``What day is [today/this day/it]?``
-- ``What day [was/will be] on [date]``
+- ``What day [was/will be] on [month day year]``
