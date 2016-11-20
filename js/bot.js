@@ -182,8 +182,12 @@
 
         erase: function () {
           if (storage) {
-            storage.removeItem('aida-memory');
-            this.sendBotMessage('My mind is clear now...');
+            if (storage.getItem('aida-memory')) {
+              storage.removeItem('aida-memory');
+              this.sendBotMessage('My mind is clear now...');
+            } else {
+              this.sendBotMessage('My mind is already clear.');
+            }
           }
         },
       },
