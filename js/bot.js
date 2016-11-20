@@ -35,6 +35,48 @@
         this.sendBotMessage(greet[Math.floor(Math.random() * greet.length)] + ', ' + this.userName + '!', null);
       },
 
+      getDay: {
+        today: function () {
+          var dateObject = new Date();
+          this.sendBotMessage('Today is ' + this.actions.getDay.calculateDay(dateObject.getDay()) + '.');
+        },
+
+        date: function (date) {
+          var dateObject = new Date(date),
+              today = new Date();
+
+          if (dateObject == "Invalid Date") {
+            this.sendBotMessage('This is an invalid date...');
+          }
+
+          else {
+            if (dateObject.getYear() < today.getYear()) {
+              this.sendBotMessage('It was ' + this.actions.getDay.calculateDay(dateObject.getDay()) + ' on ' + date + '.');
+            } 
+
+            else if (dateObject.getYear() > today.getYear()) {
+              this.sendBotMessage('It will be ' + this.actions.getDay.calculateDay(dateObject.getDay()) + ' on ' + date + '.');
+            }
+
+            else {
+              this.sendBotMessage('Today is ' + this.actions.getDay.calculateDay(dateObject.getDay()) + '.');
+            }
+          }
+        },
+
+        calculateDay: function (integer) {
+          switch (integer) {
+            case 0: return "Sunday";
+            case 1: return "Monday";
+            case 2: return "Tuesday";
+            case 3: return "Wednesday";
+            case 4: return "Thursday";
+            case 5: return "Friday";
+            case 6: return "Saturday";
+          }
+        }
+      },
+
       getLocation: function () {
         if ("geolocation" in navigator) {
           var _message = '';
@@ -70,6 +112,22 @@
           } else {
             this.sendBotMessage('I couldn\'t open a new window with the results. Please check your browser settings.');
           }
+        },
+
+        wikipedia: function (query) {
+          $.ajax({
+            type: "GET",
+            url: "http://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles=" + encodeURIComponent(query) + "&redirects=1&utf8=1&ascii=1&formatversion=2&exsentences=20&callback=?",
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+              _this.sendBotMessage(data.query.pages[0].extract.replace(/<(.|\n)*?>/g, '').replace(/\(.+\)/g, ''));
+            },
+            error: function (error) {
+              console.log("Wikipedia API Error: " + error);
+            }
+          });
         }
       },
 
@@ -109,7 +167,7 @@
             this.sendBotMessage('I am having trouble listening on this browser. I suggest you to use Google Chrome.');
             return;
           }
-          
+
           if (this.listening === true) {
             this.sendBotMessage('I am already listening...');
           } else {
@@ -123,7 +181,7 @@
             this.sendBotMessage('I am having trouble listening on this browser. I suggest you to use Google Chrome.');
             return;
           }
-          
+
           if (this.listening === false) {
             this.sendBotMessage('I stoppped listening some time ago...');
           } else {
@@ -141,14 +199,14 @@
             this.sendBotMessage('I am having trouble talking on this browser. I suggest you to use Google Chrome.');
             return;
           }
-          
+
           if (this.talking === true) {
             this.sendBotMessage('I am talking...');
           } else {
             if (annyang && annyang.isListening()) {
               annyang.abort();
             }
-            
+
             this.talking = true;
             this.sendBotMessage('I will talk from now on.');
           }
@@ -159,7 +217,7 @@
             this.sendBotMessage('I am having trouble talking on this browser. I suggest you to use Google Chrome.');
             return;
           }
-          
+
           if (this.talking === false) {
             this.sendBotMessage('I stopped talking some time ago...');
           } else {
@@ -182,14 +240,17 @@
       {pattern: /(?:who|what) are you\??$/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.'], description: 'to ask me who I am', confirm: false, special: false},
       {pattern: /tell me about yourself/i, reaction: ['I am ' + this.name + ', a conversational bot.<br>I respond to a series of words or sentences like the ones above.'], description: 'to ask me who I am', confirm: false, special: false},
       {pattern: /(?:how are you\??|what are you doing\??)/i, reaction: ['I\'m fine, thank you!', 'I am doing pretty well.', 'I\'m chatting with you.'], description: 'to ask me how I feel', confirm: false, special: false},
-      {pattern: /you are(?:\s[a-z]+)?\s(nice|sweet|beautiful|awesome|great|super|epic)/i, reaction: ['Thank you!', 'That\'s very nice of you to say that!', 'No, you are ##1!'], description: 'to compliment me', confirm: false, special: false},
+      {pattern: /you are(?:\s[a-z]+)?\s(nice|sweet|beautiful|awesome|great|super|epic)/i, reaction: ['Thank you!', 'That\'s very nice of you to say that!', 'You are ##1!'], description: 'to compliment me', confirm: false, special: false},
       {pattern: /gabriel mangiurea/i, reaction: ['Gabriel Mangiurea is my creator.<br>He is a web developer from Bucharest, Romania.<br>You can visit his website at <a href="https://gabrielmangiurea.github.io">gabrielmangiurea.github.io</a>.'], description: 'to ask about my creator', confirm: false, special: false},
       {pattern: /my name is ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}, description: 'me to change your name', confirm: false, special: false},
       {pattern: /i am ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}, description: 'me to change your name', confirm: false, special: false},
       {pattern: /(?:you can )?call me ([a-zA-Z ]+)/i, reaction: {action: this.actions.changeName}, description: 'me to change your name', confirm: false, special: false},
+      {pattern: /what day is (?:today|this day|it)\??/i, reaction: {action: this.actions.getDay.today}, description: 'me to say the day', confirm: false, special: false},
+      {pattern: /what day (?:was|will be) on ([a-z0-9\.\,\- ]+)\??/i, reaction: {action: this.actions.getDay.date}, description: 'me to say the day', confirm: false, special: false},
       {pattern: /where am i\??/i, reaction: {action: this.actions.getLocation}, description: 'me to find your location', confirm: false, special: false},
       {pattern: /search (?:(?:on )?(?:Google ))?for (.+)/i, reaction: {action: this.actions.search.google}, description: 'me to search on Google', confirm: false, special: false},
       {pattern: /i want to (?:listen (?:to )?|watch )(.+)/i, reaction: {action: this.actions.search.youtube}, description: 'me to search on Youtube', confirm: false, special: false},
+      {pattern: /wiki (.+)/i, reaction: {action: this.actions.search.wikipedia}, description: 'me to search on Wikipedia', confirm: false, special: false},
       {pattern: /^remember this\:? (.+)/i, reaction: {action: this.actions.memory.set}, description: 'me to remember something', confirm: false, special: false},
       {pattern: /^i want you to remember this for me\:? (.+)/i, reaction: {action: this.actions.memory.set}, description: 'me to remember something', confirm: false, special: false},
       {pattern: /^what do you remember\??/i, reaction: {action: this.actions.memory.get}, description: 'to ask me about my memories', confirm: false, special: false},
@@ -291,23 +352,23 @@
                     params: (this.commandQueue.args.length > 1) ? this.commandQueue.args : this.commandQueue.args[0]
                   });
                   break;
-                  
+
                 case 'no':
                   this.sendBotMessage('Let\'s continue chatting then...');
                   break;
-                  
+
                 default:
                   this.sendBotMessage('Please confirm your desired action, next time!');
                   break;
               }
-              
+
               this.commandQueue = {};
               awaitingConfirmation = false;
-              
+
             } else {
               this.sendBotMessage('What are you trying to confirm?');
             }
-            
+
           } else {
             if (awaitingConfirmation) {
               this.sendBotMessage('Please confirm your desired action...');
@@ -437,7 +498,7 @@
           _bot.events.emit('unlockUI');
         }
 
-      }, (!_bot._firstResponse ? minDelay : (data.isBot ? (_delay = (Math.floor(Math.random() * (data.message.length * 45) +  _bot.delay/2))) : 1)));
+      }, (!_bot._firstResponse ? minDelay : (data.isBot ? (_delay = (Math.floor(Math.random() * (data.message.length * 30) +  _bot.delay/2))) : 1)));
     });
 
     _bot.events.register('lockUI', function () {
