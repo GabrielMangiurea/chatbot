@@ -137,7 +137,7 @@
                   extract = data[2][0],
                   link = data[3][0];
               
-              if (extract == undefined) {
+              if (extract == undefined || extract === "") {
                 _this.sendBotMessage('I couldn\'t find out anything about ' + query + '.');
               } else {
                 extract = extract.replace(/\(.+\)/g, '');
