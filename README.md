@@ -5,7 +5,7 @@ The application does not require any kind of server as it is working on the clie
 She currently responds to the following expressions (both written and spoken):
 
 - ``Hello / Hi``
-- ``Who/What are you? / Tell me about yourself``
+- ``Who/What are you?``
 - ``How are you? / What are you doing?``
 - ``My name is [your name here]``
 - ``I am [your name here]``
@@ -17,4 +17,7 @@ She currently responds to the following expressions (both written and spoken):
 - ``Where am I?``
 - ``Search (on Google) for [search term(s) here]``
 - ``I want to [listen to/watch] [search term(s) here]``
+- ``Tell me something about [term here]``
 - ``Start/stop listening/talking``
+- ``What day is [today/this day/it]?``
+- ``What day [was/will be] on [date]``
