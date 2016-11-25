@@ -21,3 +21,4 @@ She currently responds to the following expressions (both written and spoken):
 - ``Start/stop listening/talking``
 - ``What day is [today/this day/it]?``
 - ``What day [was/will be] on [month day year]``
+- ``What day [was/will be in] [<number> days/weeks/months/years]? (tip: you can combine dates; i.e. 10 days and 7 weeks)``

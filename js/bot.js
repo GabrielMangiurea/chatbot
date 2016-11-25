@@ -44,19 +44,19 @@
         date: function (date) {
           var dateObject = new Date(date),
               today = new Date();
-          
+
           if (dateObject == "Invalid Date") {
             this.sendBotMessage('This is an invalid date.<br>Please use the following format: month day year.<br>i.e. Jan 01 2016.');
           }
 
           else {
             if (dateObject.getDay() === today.getDay() &&
-               dateObject.getMonth() === today.getMonth() &&
-               dateObject.getYear() === today.getYear()) {
-              
+                dateObject.getMonth() === today.getMonth() &&
+                dateObject.getYear() === today.getYear()) {
+
               this.sendBotMessage('Today is ' + this.actions.getDay.calculateDay(dateObject.getDay()) + '.');
             }
-            
+
             else if (dateObject < today) {
               this.sendBotMessage('It was ' + this.actions.getDay.calculateDay(dateObject.getDay()) + ' on ' + dateObject.toDateString().replace(/^[a-z]+ /i, '') + '.');
             } 
@@ -64,6 +64,58 @@
             else {
               this.sendBotMessage('It will be ' + this.actions.getDay.calculateDay(dateObject.getDay()) + ' on ' + dateObject.toDateString().replace(/^[a-z]+ /i, '') + '.');
             }
+          }
+        },
+
+        period: function (period) {
+          if (!moment()) {
+            this.sendBotMessage('Missing Javascript library. Please contact my creator!');
+            return;
+          }
+          
+          var days = 0, weeks = 0,
+              months = 0, years = 0,
+              past = false,
+              date;
+
+          var periodPattern  = /(\d{1,2}\s(?:day(?:s)?|week(?:s)?|month(?:s)?|year(?:s)?))/gi;
+          var matchPeriod = period.match(periodPattern);
+
+          if (/ago/.test(period)) {
+            past = true;
+          }
+          
+          if (!matchPeriod) { 
+            return; 
+          }
+
+          matchPeriod.forEach(function (v, i) {
+            period = v.split(" ");
+
+            switch (period[1]) {
+              case "day": case "days": days = days + parseInt(period[0]); break;
+              case "week": case "weeks": weeks = weeks + parseInt(period[0]); break;
+              case "month": case "months": months = months + parseInt(period[0]); break;
+              case "year": case "years": years = years + parseInt(period[0]); break;
+            }
+          });
+          
+          console.log(moment().add(1, 'days'));
+          
+          if (past) {
+            date = new Date(moment().subtract(days, 'days')
+                           .subtract(weeks, 'weeks')
+                           .subtract(months, 'months')
+                           .subtract(years, 'years'));
+            
+            this.sendBotMessage('It was ' + this.actions.getDay.calculateDay(date.getDay()) + ' on ' + date.toDateString().replace(/^[a-z]+ /i, '') + '.');
+          } else {
+            date = new Date(moment().add(days, 'days')
+                           .add(weeks, 'weeks')
+                           .add(months, 'months')
+                           .add(years, 'years'));
+            
+            this.sendBotMessage('It will be ' + this.actions.getDay.calculateDay(date.getDay()) + ' on ' + date.toDateString().replace(/^[a-z]+ /i, '') + '.');
           }
         },
 
@@ -119,12 +171,12 @@
 
         wikipedia: function (query) {
           if (!window.jQuery) {
-            this.sendBotMessage('I cannot access the requested information.<br>Please report this issue to my creator.');
+            this.sendBotMessage('Missing Javascript library. Please contact my creator!');
             return;
           } else if (query.match(/gabriel mangiurea/i) != null) {
             return;
           }
-          
+
           $.ajax({
             type: "GET",
             url: "https://en.wikipedia.org/w/api.php?action=opensearch&format=json&search=" + encodeURIComponent(query) + "&namespace=0&limit=1&utf8=true&callback=?",
@@ -136,12 +188,12 @@
               var title = data[1][0],
                   extract = data[2][0],
                   link = data[3][0];
-              
+
               if (extract == undefined || extract === "") {
                 _this.sendBotMessage('I couldn\'t find out anything about ' + query + '.');
               } else {
                 extract = extract.replace(/\(.+\)/g, '');
-                
+
                 if (extract.match("may refer to") !== null) {
                   _this.sendBotMessage('Please be more specific about what you want to know.');
                 } else {
@@ -278,6 +330,7 @@
       {pattern: /(?:you can )?call me ([a-z ]+)/i, reaction: {action: this.actions.changeName}, description: 'me to change your name', confirm: false, special: false},
       {pattern: /what day is (?:today|this day|it)\??/i, reaction: {action: this.actions.getDay.today}, description: 'me to say the day', confirm: false, special: false},
       {pattern: /what day (?:was|will be) on ((?:\d{1,2}|[a-z]+)(?:\s)(?:\d{1,2}|[a-z]+)(?:\s)(?:\d{2,4}))\??/i, reaction: {action: this.actions.getDay.date}, description: 'me to say the day', confirm: false, special: false},
+      {pattern: /what day (?:was|will be in) ([a-z0-9\s\,]+)(?: ago)?\??/i, reaction: {action: this.actions.getDay.period}, description: 'me to say the day', confirm: false, special: false},
       {pattern: /where am i\??/i, reaction: {action: this.actions.getLocation}, description: 'me to find your location', confirm: false, special: false},
       {pattern: /search (?:(?:on )?(?:Google ))?for (.+)/i, reaction: {action: this.actions.search.google}, description: 'me to search on Google', confirm: false, special: false},
       {pattern: /i want to (?:listen (?:to )?|watch )(.+)/i, reaction: {action: this.actions.search.youtube}, description: 'me to search on Youtube', confirm: false, special: false},
