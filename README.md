@@ -21,4 +21,11 @@ She currently responds to the following expressions (both written and spoken):
 - ``Start/stop listening/talking``
 - ``What day is [today/this day/it]?``
 - ``What day [was/will be] on [month day year]``
-- ``What day [was/will be in] [<number> days/weeks/months/years]? (tip: you can combine dates; i.e. 10 days and 7 weeks)``
+- ``What day [was/will be in] [<number> days/weeks/months/years]? (tip: you can combine time periods; i.e. 10 days and 7 weeks)``
+
+Libraries used: [annyang][1], [ResponsiveVoice][2], [jQuery][3], [moment.js][4]. 
+
+[1]: https://https://www.talater.com/annyang
+[2]: https://www.responsivevoice.org
+[3]: https://www.jquery.com
+[4]: https://www.momentjs.com
